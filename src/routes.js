@@ -18,6 +18,7 @@ import MainDashboard from "views/admin/default";
 import NFTMarketplace from "views/admin/marketplace";
 import Customers from "views/admin/customers"
 import Vessel from "views/admin/vessel"
+import Equipments from "views/admin/equipments"
 import Profile from "views/admin/profile";
 import DataTables from "views/admin/dataTables";
 import RTL from "views/admin/rtl";
@@ -62,7 +63,7 @@ const routes = [
     // path: "/profile",
     path: "/equipments",
     icon: <Icon as={MdShop} width='20px' height='20px' color='inherit' />,
-    component: Profile,
+    component: Equipments,
   },
   {
     name: "Rafts",
