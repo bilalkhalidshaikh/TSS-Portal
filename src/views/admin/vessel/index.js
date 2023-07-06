@@ -66,6 +66,8 @@ import {
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
+import {Link} from "react-router-dom"
+
 
 const Vessel = () => {
   const [open, setOpen] = React.useState(false);
@@ -131,7 +133,7 @@ const Vessel = () => {
             <TableBody>
               {vessels.map((vessel) => (
                 <TableRow key={vessel.id}>
-                  <TableCell>{vessel.vesselName}</TableCell>
+                  <TableCell><Link to="/detail/vessel-detail">{vessel.vesselName}</Link></TableCell>
                   <TableCell>{vessel.registrationNumber}</TableCell>
                   <TableCell>{vessel.type}</TableCell>
                   <TableCell>{vessel.ownerName}</TableCell>

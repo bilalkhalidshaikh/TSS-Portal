@@ -18,6 +18,7 @@ import MainDashboard from "views/admin/default";
 import NFTMarketplace from "views/admin/marketplace";
 import Customers from "views/admin/customers"
 import Vessel from "views/admin/vessel"
+import VesselDetail from "views/detail/vessel"
 import Equipments from "views/admin/equipments"
 import Profile from "views/admin/profile";
 import DataTables from "views/admin/dataTables";
@@ -85,6 +86,16 @@ const routes = [
     // component: RTL,
     component: Profile,
   },
+  // {
+  //   name: "Vessel Detail",
+  //   // layout: "/rtl",
+  //   layout: "/admin",
+  //   // path: "/rtl-default",
+  //   path: "/vessel-detail",
+  //   // icon: <Icon as={MdContacts} width='20px' height='20px' color='inherit' />,
+  //   // component: RTL,
+  //   component: VesselDetail,
+  // },
 ];
 
 export default routes;
