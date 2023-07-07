@@ -86,16 +86,16 @@ const routes = [
     // component: RTL,
     component: Profile,
   },
-  // {
-  //   name: "Vessel Detail",
-  //   // layout: "/rtl",
-  //   layout: "/admin",
-  //   // path: "/rtl-default",
-  //   path: "/vessel-detail",
-  //   // icon: <Icon as={MdContacts} width='20px' height='20px' color='inherit' />,
-  //   // component: RTL,
-  //   component: VesselDetail,
-  // },
+  {
+    // name: "Vessel Detail",
+    // layout: "/rtl",
+    layout: "/admin",
+    // path: "/rtl-default",
+    path: "/vessel-detail",
+    // icon: <Icon as={MdContacts} width='20px' height='20px' color='inherit' />,
+    // component: RTL,
+    component: VesselDetail,
+  },
 ];
 
 export default routes;

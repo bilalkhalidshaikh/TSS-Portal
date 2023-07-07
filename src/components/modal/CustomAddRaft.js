@@ -54,7 +54,7 @@ const CustomRaftFormDialog = () => {
             value={formValues.RaftsName}
             onChange={handleInputChange}
           />
-          &nbsp;
+          &nbsp;                                
           <TextField
             name="RaftsDetail"
             label="Rafts Detail"

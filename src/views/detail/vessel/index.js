@@ -24,7 +24,10 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
-import { Block, Delete, Add, MoreVert } from '@mui/icons-material';
+import KayakingIcon from '@mui/icons-material/Kayaking';
+// import { Block, Delete, Add, MoreVert,MdShop } from '@mui/icons-material';
+import {MdShop} from "react-icons/md"
+import SailingIcon from '@mui/icons-material/Sailing';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -48,7 +51,7 @@ function ButtonAppBar() {
             aria-label="menu"
             sx={{ mr: 2 }}
           >
-            <Link to="/admin/vessel"> <ArrowBackIcon /></Link>
+            <Link to="/admin/vessel"> <SailingIcon /></Link>
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Vessel Name
@@ -172,10 +175,13 @@ const VesselDetail = () => {
   return (
     <ThemeProvider theme={theme}>
       <RootContainer>
-        <ButtonAppBar />
+        <br />
+        <br />
+        <br />
         <br />
         {/* <AnimationContainer> */}
         <Container>
+          <ButtonAppBar />
 
           <Box
             sx={{
@@ -260,7 +266,7 @@ const VesselDetail = () => {
           <br />
 
           <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" sx={{ backgroundColor: '#11047A !important' }}>
+            {/* <AppBar position="static" sx={{ backgroundColor: '#11047A !important' }}>
               <Toolbar>
                 <IconButton
                   size="large"
@@ -269,15 +275,32 @@ const VesselDetail = () => {
                   aria-label="menu"
                   sx={{ mr: 2 }}
                 >
-                  {/* <MenuIcon /> */}
                 </IconButton>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  Rafts
+                  <KayakingIcon />   Rafts
                 </Typography>
-                {/* <Button color="inherit"><Add />Add Raft</Button> */}
-                <CustomRaftFormDialog/>
+                <CustomRaftFormDialog />
               </Toolbar>
-            </AppBar>
+            </AppBar> */}
+                 <AppBar position="static" sx={{ backgroundColor: '#11047A !important' }}>
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <Link to="/admin/vessel"> <KayakingIcon /></Link>
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Rafts
+          </Typography>
+          <Stack direction="row" spacing={2}>
+          <CustomRaftFormDialog />
+           </Stack>
+        </Toolbar>
+      </AppBar>
             <br />
             <br />
             <Stack direction="row" spacing={2}>
@@ -327,8 +350,8 @@ const VesselDetail = () => {
           <br />
           <br />
           <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" 
-            sx={{ backgroundColor: '#11047A !important' }}>
+            <AppBar position="static"
+              sx={{ backgroundColor: '#11047A !important' }}>
               <Toolbar>
                 <IconButton
                   size="large"
@@ -338,11 +361,12 @@ const VesselDetail = () => {
                   sx={{ mr: 2 }}
                 >
                   {/* <MenuIcon /> */}
+                  <MdShop/>
                 </IconButton>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                   Equipments
                 </Typography>
-                <CustomFormDialog/>
+                <CustomFormDialog />
                 {/* <Button color="inherit" ><Add />Add Equipments</Button> */}
               </Toolbar>
             </AppBar>

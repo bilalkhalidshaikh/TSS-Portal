@@ -133,7 +133,7 @@ const Vessel = () => {
             <TableBody>
               {vessels.map((vessel) => (
                 <TableRow key={vessel.id}>
-                  <TableCell><Link to="/detail/vessel-detail">{vessel.vesselName}</Link></TableCell>
+                  <TableCell><Link to="/admin/vessel-detail">{vessel.vesselName}</Link></TableCell>
                   <TableCell>{vessel.registrationNumber}</TableCell>
                   <TableCell>{vessel.type}</TableCell>
                   <TableCell>{vessel.ownerName}</TableCell>
