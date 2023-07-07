@@ -15,8 +15,54 @@ import {
   TextField,
   Card,
   CardContent,
+  Stack,
+  Container,
+  CardMedia,
+  CardActions,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from '@mui/material';
 import { Block, Delete, Add, MoreVert } from '@mui/icons-material';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import MenuIcon from '@mui/icons-material/Menu';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Link } from "react-router-dom"
+import Equipments from 'views/admin/equipments';
+import { ship } from 'assets/img';
+import CustomFormDialog from 'components/modal/CustomAddEquipment';
+import CustomRaftFormDialog from 'components/modal/CustomAddRaft';
+
+function ButtonAppBar() {
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" sx={{ backgroundColor: '#11047A !important' }}>
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <Link to="/admin/vessel"> <ArrowBackIcon /></Link>
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Vessel Name
+          </Typography>
+          <Stack direction="row" spacing={2}>
+            <Button color="inherit" variant='outlined'>Disable</Button>
+            <Button color="inherit" variant='outlined'>Delete</Button>
+          </Stack>
+        </Toolbar>
+      </AppBar>
+    </Box>
+  );
+}
+
 
 const RootContainer = styled('div')(({ theme }) => ({
   padding: '20px',
@@ -96,46 +142,91 @@ const VesselDetail = () => {
     },
   });
 
+
+  const [equipopen, setEquipOpen] = React.useState(false);
+  const handleEquipModalOpen = () => {
+    setOpen(true);
+  };
+  const handleEquipModalClose = () => {
+    setOpen(false);
+  };
+
+  const [Equipmentss, setEquipmentss] = React.useState([
+    {
+      id: 1,
+      EquipmentsName: "Equipments 1",
+      mva: "78%",
+      unitPrice: "980$",
+      expiryDate: "Dec-28-2023",
+      createdAt: "2023-07-04",
+    },
+    // Add more Equipments data as needed
+  ]);
+
+  const handleAddEquipments = () => {
+    // Implement the logic to add a new Equipments
+    handleEquipModalClose();
+  };
+
+
   return (
     <ThemeProvider theme={theme}>
       <RootContainer>
-        <AnimationContainer>
-          <Title variant="h6">Vessel Detail</Title>
-        </AnimationContainer>
+        <ButtonAppBar />
+        <br />
+        {/* <AnimationContainer> */}
+        <Container>
 
-        <div>
-          <Button startIcon={<Block />} color="secondary">
-            Disable
-          </Button>
-          <Button startIcon={<Delete />} color="secondary">
-            Delete
-          </Button>
-        </div>
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              padding: '20px !important',
+              '& > :not(style)': {
+                m: 1,
+                width: 128,
+                height: 128,
+                padding: '60px !important'
+              },
+            }}
+            component={Paper}
+          // elevation={}
+          >
+            {/* <Paper elevation={0} > */}
+            Vessel Info :
+            <br />
+            <br />
+            Legends of Runeterra is a 2020 digital collectible card game developed and published by Riot Games.
+            {/* </Paper> */}
+            {/* <Paper />
+      <Paper elevation={3} /> */}
+          </Box>
+          <br />
 
-        <TableContainerStyled component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Registration Number</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Owner</TableCell>
-                <TableCell>Rafts</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>Dummy Name</TableCell>
-                <TableCell>Dummy Registration Number</TableCell>
-                <TableCell>Dummy Type</TableCell>
-                <TableCell>Dummy Owner</TableCell>
-                <TableCell>Dummy Rafts</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainerStyled>
+          <TableContainerStyled component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Registration Number</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Owner</TableCell>
+                  <TableCell>Rafts</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Dummy Name</TableCell>
+                  <TableCell>Dummy Registration Number</TableCell>
+                  <TableCell>Dummy Type</TableCell>
+                  <TableCell>Dummy Owner</TableCell>
+                  <TableCell>Dummy Rafts</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainerStyled>
 
-        <div>
+          {/* <div>
           <Typography variant="subtitle1">Rafts</Typography>
           <IconButton onClick={handleOpen} color="primary">
             <Add />
@@ -165,9 +256,122 @@ const VesselDetail = () => {
             </IconButton>
             <Typography variant="body1">Dummy Ship Details</Typography>
           </CardContent>
-        </CardStyled>
+        </CardStyled> */}
+          <br />
 
-        <div>
+          <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static" sx={{ backgroundColor: '#11047A !important' }}>
+              <Toolbar>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ mr: 2 }}
+                >
+                  {/* <MenuIcon /> */}
+                </IconButton>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                  Rafts
+                </Typography>
+                {/* <Button color="inherit"><Add />Add Raft</Button> */}
+                <CustomRaftFormDialog/>
+              </Toolbar>
+            </AppBar>
+            <br />
+            <br />
+            <Stack direction="row" spacing={2}>
+
+              <Card sx={{ maxWidth: 345 }}>
+                <CardMedia
+                  sx={{ height: 140, width: 180 }}
+                  image={ship}
+                  title="green iguana"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    Raft Name
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Raft are a widespread group of squamate reptiles, with over 6,000
+                    species, ranging across all continents except Antarctica
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small">Share</Button>
+                  <Button size="small">Learn More</Button>
+                </CardActions>
+              </Card>
+              <Card sx={{ maxWidth: 345 }}>
+                <CardMedia
+                  sx={{ height: 140, width: 180 }}
+                  image={ship}
+                  title="green iguana"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    Raft Name
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Raft are a widespread group of squamate reptiles, with over 6,000
+                    species, ranging across all continents except Antarctica
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small">Share</Button>
+                  <Button size="small">Learn More</Button>
+                </CardActions>
+              </Card>
+            </Stack>
+          </Box>
+          <br />
+          <br />
+          <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static" 
+            sx={{ backgroundColor: '#11047A !important' }}>
+              <Toolbar>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ mr: 2 }}
+                >
+                  {/* <MenuIcon /> */}
+                </IconButton>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                  Equipments
+                </Typography>
+                <CustomFormDialog/>
+                {/* <Button color="inherit" ><Add />Add Equipments</Button> */}
+              </Toolbar>
+            </AppBar>
+            <br />
+            <br />
+            <TableContainerStyled component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Equipment Name</TableCell>
+                    <TableCell>MVA</TableCell>
+                    <TableCell>Unit Price</TableCell>
+                    <TableCell>Total Units</TableCell>
+                    <TableCell>Expiry Date</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Dummy Name</TableCell>
+                    <TableCell>Dummy Mva</TableCell>
+                    <TableCell>Dummy Price</TableCell>
+                    <TableCell>Dummy Unit</TableCell>
+                    <TableCell>Dummy Date</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainerStyled>
+          </Box>
+          {/* <div>
           <Typography variant="subtitle1">Equipments</Typography>
           <IconButton onClick={handleOpen} color="primary">
             <Add />
@@ -196,9 +400,32 @@ const VesselDetail = () => {
                 <TableCell>Dummy Unit Price</TableCell>
                 <TableCell>Dummy Total Units</TableCell>
               </TableRow>
-                </TableBody>
+            </TableBody>
           </Table>
-        </TableContainerStyled>
+        </TableContainerStyled> */}
+          {/* <Equipments/  > */}
+          {/* <Dialog open={equipopen} onClose={handleEquipModalClose}>
+            <DialogTitle>Add New Equipments</DialogTitle>
+            <DialogContent>
+              <TextField label="Equipments Name" fullWidth />
+              <TextField label="Mva" type="number" fullWidth />
+              <TextField label="Unit Price" type="number" fullWidth />
+              <TextField label="Expiry Date" type="number" fullWidth />
+           
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleEquipModalClose}>Cancel</Button>
+              <Button
+                sx={{ backgroundColor: "#11047A" }}
+                variant="contained"
+                color="primary"
+                onClick={handleAddEquipments}
+              >
+                Add Equipments
+              </Button>
+            </DialogActions>
+          </Dialog> */}
+        </Container>
       </RootContainer>
     </ThemeProvider>
   );
