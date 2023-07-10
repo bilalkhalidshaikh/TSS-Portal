@@ -21,6 +21,7 @@ import Vessel from "views/admin/vessel"
 import VesselDetail from "views/detail/vessel"
 import Equipments from "views/admin/equipments"
 import Profile from "views/admin/profile";
+import CustomersAndSupport from "views/admin/contactsupport";
 import DataTables from "views/admin/dataTables";
 import RTL from "views/admin/rtl";
 
@@ -84,7 +85,7 @@ const routes = [
     path: "/contact-support",
     icon: <Icon as={MdContacts} width='20px' height='20px' color='inherit' />,
     // component: RTL,
-    component: Profile,
+    component: CustomersAndSupport,
   },
   {
     // name: "Vessel Detail",
