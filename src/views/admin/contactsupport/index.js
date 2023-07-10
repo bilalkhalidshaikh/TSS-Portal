@@ -125,7 +125,7 @@ const CustomersAndSupport = () => {
         <Grid container spacing={3}>
           <Grid item xs={12} md={3}>
             <StyledPaper>
-              <Typography variant="h4">Customers and Support</Typography>
+              <Typography variant="h4"></Typography>
               <UsersList>
                 <UserItem
                   selected={selectedUser === 'Bilal'}
