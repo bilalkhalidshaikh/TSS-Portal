@@ -11,9 +11,9 @@ import {
   ListItemText,
   Divider,
   Avatar,
-  Stack,
 } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
+import GlassmorphismBackground from './GlassmorphismBackground';
 
 const Root = styled('div')(({ theme }) => ({
   flexGrow: 1,
@@ -24,12 +24,36 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
 }));
 
+const UsersList = styled(List)(({ theme }) => ({
+  maxHeight: 'calc(100vh - 180px)', // Set the maximum height to 100% of the viewport height minus padding
+  overflow: 'auto', // Enable vertical scrolling when users exceed the container height
+}));
+
+const UserItem = styled(ListItem)(({ theme, selected }) => ({
+  cursor: 'pointer',
+  backgroundColor: selected ? "#11047A" : 'transparent',
+  color: selected ? theme.palette.primary.contrastText : theme.palette.text.primary,
+  '&:hover': {
+    backgroundColor: "#11047A",
+    color: theme.palette.primary.contrastText,
+  },
+}));
 
 const ChatContainer = styled('div')(({ theme }) => ({
-    marginTop: theme.spacing(3),
-    maxHeight: '50vh', // Set the maximum height to 60% of the viewport height
-    overflow: 'auto', // Enable vertical scrolling when messages exceed the container height
-  }));
+  marginTop: theme.spacing(3),
+  maxHeight: 'calc(100vh - 280px)', // Set the maximum height to 100% of the viewport height minus padding
+  overflow: 'auto', // Enable vertical scrolling when messages exceed the container height
+  backdropFilter: 'blur(10px)', // Apply glassmorphism effect to the background
+  background: 'rgba(255, 255, 255, 0.2)', // Adjust the background opacity as needed
+  borderRadius: '12px',
+  padding: theme.spacing(2),
+}));
+
+const ChatInputContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  marginTop: theme.spacing(2),
+}));
 
 const ChatInput = styled(TextField)(({ theme }) => ({
   flexGrow: 1,
@@ -38,37 +62,43 @@ const ChatInput = styled(TextField)(({ theme }) => ({
 
 const ChatButton = styled(Button)(({ theme }) => ({
   flexShrink: 0,
+  marginLeft: theme.spacing(1),
 }));
 
 const ChatMessage = styled(ListItem)(({ theme }) => ({
   marginBottom: theme.spacing(2),
-}));
-
-const ChatDivider = styled(Divider)(({ theme }) => ({
-  marginTop: theme.spacing(2),
-  marginBottom: theme.spacing(2),
-}));
-
-const ChatMessageAdmin = styled(ListItem)(({ theme }) => ({
   display: 'flex',
   alignItems: 'flex-start',
 }));
 
 const ChatMessageText = styled(ListItemText)(({ theme }) => ({
-  backgroundColor: '#F3F3F3',
-  borderRadius: '10px',
-  padding: '8px 12px',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: '12px',
+  padding: theme.spacing(1, 2),
   marginLeft: theme.spacing(1),
   maxWidth: '70%',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Add a subtle shadow effect to the message
 }));
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#3f51b5', // Customize the primary color as desired
+      contrastText: '#fff', // Customize the text color for the primary color
+    },
+  },
+});
 
 const CustomersAndSupport = () => {
+  const [selectedUser, setSelectedUser] = useState(null);
   const [message, setMessage] = useState('');
   const [chatMessages, setChatMessages] = useState([
     { sender: 'Admin', message: 'Hello! How can I assist you today?' },
   ]);
+
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+  };
 
   const handleSendMessage = () => {
     if (message.trim() !== '') {
@@ -93,63 +123,87 @@ const CustomersAndSupport = () => {
         <br/>
         <br/>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={3}>
             <StyledPaper>
               <Typography variant="h4">Customers and Support</Typography>
-              {/* Add your content here */}
+              <UsersList>
+                <UserItem
+                  selected={selectedUser === 'Bilal'}
+                  onClick={() => handleUserSelect('Bilal')}
+                >
+                  <Avatar />
+                  &emsp;
+                  <ListItemText primary="Bilal" />
+                </UserItem>
+                <UserItem
+                  selected={selectedUser === 'Abdul Haseeb'}
+                  onClick={() => handleUserSelect('Abdul Haseeb')}
+                  >
+                  <Avatar />
+                  &emsp;
+                  <ListItemText primary="Abdul Haseeb" />
+                </UserItem>
+                <UserItem
+                  selected={selectedUser === 'Abdul Samad'}
+                  onClick={() => handleUserSelect('Abdul Samad')}
+                  >
+                  <Avatar />
+                  &emsp;
+                  <ListItemText primary="Abdul Samad" />
+                </UserItem>
+                {/* Add more user items as needed */}
+              </UsersList>
             </StyledPaper>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={9}>
             <StyledPaper>
-              <Typography variant="h5">Chat with Admin</Typography>
-              <ChatContainer>
-                <List>
-                  {chatMessages.map((chat, index) => (
-                    <ChatMessage key={index}>
-                      <Avatar>
-                        {chat.sender === 'Admin' ? <AccountCircle /> : <AccountCircle />}
-                      </Avatar>
-                      <ChatMessageText
-                        primary={chat.sender}
-                        secondary={chat.message}
-                        primaryTypographyProps={{ variant: 'subtitle2', color: 'textSecondary' }}
-                        secondaryTypographyProps={{ variant: 'body1' }}
-                      />
-                    </ChatMessage>
-                  ))}
-                </List>
-                <div >
-                <Stack direction="row" spacing={2}>
-
-                  <TextField
-                    className={ChatInput}
-                    variant="outlined"
-                    placeholder="Type your message..."
-                    fullWidth
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => {
+              <Typography variant="h5">Chat with {selectedUser || 'Admin'}</Typography>
+              {selectedUser && (
+                <ChatContainer>
+                  <List>
+                    {chatMessages.map((chat, index) => (
+                      <ChatMessage key={index}>
+                        <Avatar>
+                          {chat.sender === 'Admin' ? <AccountCircle /> : <AccountCircle />}
+                        </Avatar>
+                        <ChatMessageText
+                          primary={chat.sender}
+                          secondary={chat.message}
+                          primaryTypographyProps={{ variant: 'subtitle2', color: 'textSecondary' }}
+                          secondaryTypographyProps={{ variant: 'body1' }}
+                        />
+                      </ChatMessage>
+                    ))}
+                  </List>
+                  <ChatInputContainer>
+                    <ChatInput
+                      variant="outlined"
+                      placeholder="Type your message..."
+                      fullWidth
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyPress={(e) => {
                         if (e.key === 'Enter') {
-                          handleSendMessage(e);
+                          handleSendMessage();
                         }
                       }}
-                  />
-                  <Button
-                    className={ChatButton}
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSendMessage}
-                    sx={{ backgroundColor: "#11047A" }}
-                  >
-                    Send
-                  </Button>
-                  </Stack>
-                </div>
-              </ChatContainer>
+                    />
+                    <ChatButton
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSendMessage}
+                      sx={{backgroundColor:"#11047A"}}
+                    >
+                      Send
+                    </ChatButton>
+                  </ChatInputContainer>
+                </ChatContainer>
+              )}
             </StyledPaper>
           </Grid>
         </Grid>
       </Root>
+      <GlassmorphismBackground /> {/* Add the glassmorphism background component */}
     </ThemeProvider>
   );
 };
