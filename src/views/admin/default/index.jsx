@@ -1,153 +1,169 @@
-
-
-// Chakra imports
-import {
-  Avatar,
-  Box,
-  Flex,
-  FormLabel,
-  Icon,
-  Select,
-  SimpleGrid,
-  useColorModeValue,
-} from "@chakra-ui/react";
-// Assets
-import Usa from "assets/img/dashboards/usa.png";
-// Custom components
-import MiniCalendar from "components/calendar/MiniCalendar";
-import MiniStatistics from "components/card/MiniStatistics";
-import IconBox from "components/icons/IconBox";
 import React from "react";
 import {
-  MdAddTask,
-  MdAttachMoney,
-  MdBarChart,
-  MdFileCopy,
-} from "react-icons/md";
-import CheckTable from "views/admin/default/components/CheckTable";
-import ComplexTable from "views/admin/default/components/ComplexTable";
-import DailyTraffic from "views/admin/default/components/DailyTraffic";
-import PieCard from "views/admin/default/components/PieCard";
-import Tasks from "views/admin/default/components/Tasks";
-import TotalSpent from "views/admin/default/components/TotalSpent";
-import WeeklyRevenue from "views/admin/default/components/WeeklyRevenue";
-import {
-  columnsDataCheck,
-  columnsDataComplex,
-} from "views/admin/default/variables/columnsData";
-import tableDataCheck from "views/admin/default/variables/tableDataCheck.json";
-import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
+import ThreeDRotationIcon from "@mui/icons-material/ThreeDRotation";
+import { DataGrid } from "@mui/x-data-grid";
 
-export default function UserReports() {
-  // Chakra Color Mode
-  const brandColor = useColorModeValue("brand.500", "white");
-  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+const theme = createTheme();
+
+const useStyles = makeStyles(() => ({
+  card: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "16px",
+    backgroundColor: "#11047A",
+    backdropFilter: "blur(10px)",
+    boxShadow: "0px 8px 32px rgba(31, 38, 135, 0.37)",
+    color: "white",
+  },
+  table: {
+    height: 400,
+    width: "100%",
+    "& .MuiDataGrid-root": {
+      border: "none",
+      "& .MuiDataGrid-cell": {
+        borderBottom: "1px solid rgba(224, 224, 224, 1)",
+      },
+      "& .MuiDataGrid-row:last-child .MuiDataGrid-cell": {
+        borderBottom: "none",
+      },
+    },
+    "& .MuiDataGrid-columnsContainer": {
+      backgroundColor: "#f5f5f5",
+      borderBottom: "1px solid rgba(224, 224, 224, 1)",
+    },
+    "& .MuiDataGrid-columnHeader": {
+      fontWeight: "bold",
+    },
+    "& .MuiDataGrid-row": {
+      "&:hover": {
+        backgroundColor: "#f5f5f5",
+      },
+    },
+  },
+}));
+
+const Dashboard = () => {
+  const activities = [
+    {
+      id: 1,
+      description: 'A new vessel named "ABC" was created',
+    },
+    {
+      id: 2,
+      description: "Abdul started a ticket",
+    },
+    {
+      id: 3,
+      description: 'Admin sent a reply to Abdul on ticket "XYZ"',
+    },
+  ];
+
+  const classes = useStyles();
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 100 },
+    { field: "description", headerName: "Description", width: 400 },
+  ];
+
   return (
-    <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
-    <h1>Under Development...</h1>
-      {/* <SimpleGrid
-        columns={{ base: 1, md: 2, lg: 3, "2xl": 6 }}
-        gap='20px'
-        mb='20px'>
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w='56px'
-              h='56px'
-              bg={boxBg}
-              icon={
-                <Icon w='32px' h='32px' as={MdBarChart} color={brandColor} />
-              }
+    <ThemeProvider theme={theme}>
+      <Box pt={{ xs: "130px", md: "80px", xl: "80px" }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Card className={classes.card}>
+              <CardContent>
+                <AccessAlarmIcon style={{ fontSize: 40 }} />
+                <Typography variant="h6" component="div">
+                  Customers
+                </Typography>
+                <Typography variant="h3" component="div">
+                  50
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ThreeDRotationIcon style={{ fontSize: 40 }} />
+                <Typography variant="h6" component="div">
+                  Rafts
+                </Typography>
+                <Typography variant="h3" component="div">
+                  20
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Card className={classes.card}>
+              <CardContent>
+                <AccessAlarmIcon style={{ fontSize: 40 }} />
+                <Typography variant="h6" component="div">
+                  Vessels
+                </Typography>
+                <Typography variant="h3" component="div">
+                  30
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ThreeDRotationIcon style={{ fontSize: 40 }} />
+                <Typography variant="h6" component="div">
+                  Support Tickets
+                </Typography>
+                <Typography variant="h3" component="div">
+                  10
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Card className={classes.card}>
+              <CardContent>
+                <AccessAlarmIcon style={{ fontSize: 40 }} />
+                <Typography variant="h6" component="div">
+                  Equipments
+                </Typography>
+                <Typography variant="h3" component="div">
+                  15
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+        <Box mt={3}>
+          <Typography variant="h5" gutterBottom>
+            Recent Activities
+          </Typography>
+          <div style={{ height: 400, width: "100%" }}>
+            <DataGrid
+              className={classes.table}
+              rows={activities}
+              columns={columns}
+              pageSize={5}
+              disableSelectionOnClick
             />
-          }
-          name='Earnings'
-          value='$350.4'
-        />
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w='56px'
-              h='56px'
-              bg={boxBg}
-              icon={
-                <Icon w='32px' h='32px' as={MdAttachMoney} color={brandColor} />
-              }
-            />
-          }
-          name='Spend this month'
-          value='$642.39'
-        />
-        <MiniStatistics growth='+23%' name='Sales' value='$574.34' />
-        <MiniStatistics
-          endContent={
-            <Flex me='-16px' mt='10px'>
-              <FormLabel htmlFor='balance'>
-                <Avatar src={Usa} />
-              </FormLabel>
-              <Select
-                id='balance'
-                variant='mini'
-                mt='5px'
-                me='0px'
-                defaultValue='usd'>
-                <option value='usd'>USD</option>
-                <option value='eur'>EUR</option>
-                <option value='gba'>GBA</option>
-              </Select>
-            </Flex>
-          }
-          name='Your balance'
-          value='$1,000'
-        />
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w='56px'
-              h='56px'
-              bg='linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)'
-              icon={<Icon w='28px' h='28px' as={MdAddTask} color='white' />}
-            />
-          }
-          name='New Tasks'
-          value='154'
-        />
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w='56px'
-              h='56px'
-              bg={boxBg}
-              icon={
-                <Icon w='32px' h='32px' as={MdFileCopy} color={brandColor} />
-              }
-            />
-          }
-          name='Total Projects'
-          value='2935'
-        />
-      </SimpleGrid>
-
-      <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='20px'>
-        <TotalSpent />
-        <WeeklyRevenue />
-      </SimpleGrid>
-      <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap='20px' mb='20px'>
-        <CheckTable columnsData={columnsDataCheck} tableData={tableDataCheck} />
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px'>
-          <DailyTraffic />
-          <PieCard />
-        </SimpleGrid>
-      </SimpleGrid>
-      <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap='20px' mb='20px'>
-        <ComplexTable
-          columnsData={columnsDataComplex}
-          tableData={tableDataComplex}
-        />
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px'>
-          <Tasks />
-          <MiniCalendar h='100%' minW='100%' selectRange={false} />
-        </SimpleGrid>
-      </SimpleGrid> */}
-    </Box>
+          </div>
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
-}
+};
+
+export default Dashboard;
