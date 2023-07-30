@@ -180,28 +180,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import React from "react";
 // import {
 //   Box,
@@ -352,8 +330,353 @@
 //   );
 // }
 
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import {
+//   Box,
+//   Button,
+//   Container,
+//   Dialog,
+//   DialogActions,
+//   DialogContent,
+//   DialogTitle,
+//   IconButton,
+//   Paper,
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableHead,
+//   TableRow,
+//   TextField,
+// } from "@mui/material";
+// import { Block, Delete } from "@mui/icons-material";
+// import { ThemeProvider, createTheme } from "@mui/material/styles";
+// import { CircularProgress } from "@mui/material";
+// import { Backdrop } from "@mui/material";
 
+// const CustomerList = () => {
+//   const [open, setOpen] = React.useState(false);
+//   const BASE_URL = "https://api.raft-service.com";
+//   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f"; // Replace this with your actual API key
+//   const handleModalOpen = () => {
+//     setOpen(true);
+//   };
+//   const handleModalClose = () => {
+//     setOpen(false);
+//   };
 
+//   const [customers, setCustomers] = useState([]); // Initialize as an empty array
+//   const [loading, setLoading] = useState(true); // Initialize loading state as true
+//   const [showLoader, setShowLoader] = useState(false);
+
+//   const [newCustomerData, setNewCustomerData] = useState({
+//     customerName: "",
+//     email: "",
+//     phone_number: "",
+//     password: "",
+//   });
+
+//   const fetchCustomers = async () => {
+//     try {
+//       // Fetch data from the API
+//       const response = await axios.get(
+//         `${BASE_URL}/customers/get-all-customers`
+//       );
+
+//       // Extract customer data from the response
+//       const customerData = response.data.data;
+//       console.log("API response data:", customerData); // Debugging statement
+//       setCustomers(customerData); // Update customers state with the fetched data
+//       setLoading(false); // Set loading state to false after fetching data
+//     } catch (error) {
+//       console.error("Error fetching customers:", error);
+//       setCustomers([]); // Set customers as an empty array if an error occurs
+//       setLoading(false); // Set loading state to false if there's an error
+//     }
+//   };
+//   useEffect(() => {
+
+//     fetchCustomers();
+//   }, []);
+
+//   const blockCustomer = async (customerId) => {
+//     // Optimistically update the customer state to reflect the change immediately
+//     setShowLoader(true); // Show the loader
+
+//     setCustomers((prevCustomers) =>
+//       prevCustomers.map((customer) =>
+//         customer._id === customerId ? { ...customer, isBlocked: true } : customer
+//       )
+//     );
+
+//     try {
+//       // Make API request to block the customer
+//       await axios.post(`${BASE_URL}/customers/block-customer`, {
+//         customerId: customerId,
+
+//       });
+//     } catch (error) {
+//       console.error("Error blocking customer:", error);
+//       // Revert the change in case of an error
+//       setCustomers((prevCustomers) =>
+//         prevCustomers.map((customer) =>
+//           customer._id === customerId ? { ...customer, isBlocked: false } : customer
+//         )
+//       );
+//     }
+//   };
+
+//   const unblockCustomer = async (customerId) => {
+//     // Optimistically update the customer state to reflect the change immediately
+//     setCustomers((prevCustomers) =>
+//       prevCustomers.map((customer) =>
+//         customer._id === customerId ? { ...customer, isBlocked: false } : customer
+//       )
+//     );
+
+//     try {
+//       // Make API request to unblock the customer
+//       await axios.post(`${BASE_URL}/customers/unblock-customer`, {
+//         customerId: customerId,
+//       });
+//     } catch (error) {
+//       console.error("Error unblocking customer:", error);
+//       // Revert the change in case of an error
+//       setCustomers((prevCustomers) =>
+//         prevCustomers.map((customer) =>
+//           customer._id === customerId ? { ...customer, isBlocked: true } : customer
+//         )
+//       );
+//     }
+//   };
+
+//   const deleteCustomer = async (customerId) => {
+//     try {
+//       // Make API request to delete the customer
+//       await axios.post(`${BASE_URL}/customers/delete-customer`, {
+//         customerId: customerId,
+//       });
+
+//       // Remove the customer from the customer state
+//       setCustomers((prevCustomers) => prevCustomers.filter((customer) => customer._id !== customerId));
+//     } catch (error) {
+//       console.error("Error deleting customer:", error);
+//     }
+//   };
+
+//   const createCustomer = async (newCustomerData) => {
+//     try {
+//       // Set the headers with the API key
+//       const headers = {
+//         'Content-Type': 'application/json',
+//         Authorization: `Bearer ${API_KEY}`,
+//       };
+
+//       // Make API request to create the new customer
+//       await axios.post(`${BASE_URL}/customers/register-customer`, newCustomerData, { headers });
+
+//       // Close the modal
+//       handleModalClose();
+//     } catch (error) {
+//       console.error("Error creating customer:", error);
+//     }
+//   };
+
+//   const handleAddCustomer = async () => {
+//     // Implement the logic to add a new customer
+//     try {
+//       // Create the new customer data object from the state
+//       const customerData = {
+//         customerName: newCustomerData.customerName,
+//         email: newCustomerData.email,
+//         phone_number: newCustomerData.phone_number,
+//         password: newCustomerData.password,
+//       };
+
+//       console.log("Customer Data:", customerData); // Add this line to check the data
+
+//       if (
+//         customerData.customerName &&
+//         customerData.email &&
+//         customerData.phone_number &&
+//         customerData.password
+//       ) {
+//         await createCustomer(customerData);
+//       } else {
+//         // Handle the case when one or more fields are missing
+//         console.error("Missing data fields");
+//       }
+
+//       // Show a loading state for a second before fetching customers again
+//       setLoading(true);
+//       setTimeout(() => {
+//         setLoading(false);
+//         fetchCustomers()
+//         handleModalClose();
+
+//       }, 1000);
+
+//       // Reset the form fields after successfully adding the customer
+//       setNewCustomerData({
+//         customerName: "",
+//         email: "",
+//         phone_number: "",
+//         password: "",
+//       });
+//     } catch (error) {
+//       console.error("Error adding customer:", error);
+//       handleModalClose();
+//     }
+//   };
+
+//   return (
+//     <Container>
+//       <Box mt={2} sx={{ pt: 3 }}>
+//         <Button
+//           variant="contained"
+//           sx={{ backgroundColor: "#11047A" }}
+//           onClick={handleModalOpen}
+//         >
+//           Add New Customer
+//         </Button>
+//       </Box>
+//       <br />
+//       {loading ? (
+//         <CircularProgress color="primary" /> // Show the loader while fetching data
+//       ) : (
+//         <TableContainer component={Paper} sx={{maxHeight:'500px'}}>
+//           <Table>
+//             <TableHead>
+//               <TableRow>
+//                 <TableCell>Customer Name</TableCell>
+//                 <TableCell>Email</TableCell>
+//                 <TableCell>Phone Number</TableCell>
+//                 <TableCell>Is Active</TableCell>
+//                 <TableCell>Is Blocked</TableCell>
+//                 <TableCell>Actions</TableCell>
+//               </TableRow>
+//             </TableHead>
+//             <TableBody>
+//               {customers.length === 0 ? ( // Check if customers is an empty array
+//                 <TableRow>
+//                   <TableCell colSpan={6}>No customers found.</TableCell>
+//                 </TableRow>
+//               ) : (
+//                 customers.map((customer) => (
+//                   <TableRow key={customer._id}>
+//                     <TableCell>{customer.customerName}</TableCell>
+//                     <TableCell>{customer.email}</TableCell>
+//                     <TableCell>{customer.phone_number}</TableCell>
+//                     <TableCell>{customer.isActive ? "Yes" : "No"}</TableCell>
+//                     <TableCell>{customer.isBlocked ? "Yes" : "No"}</TableCell>
+//                     <TableCell>
+//                       {customer.isBlocked ? (
+//                         <IconButton onClick={() => unblockCustomer(customer._id)}>
+//                           Unblock
+//                         </IconButton>
+//                       ) : (
+//                         <IconButton onClick={() => blockCustomer(customer._id)}>
+//                           Block
+//                         </IconButton>
+//                       )}
+//                       <IconButton onClick={() => deleteCustomer(customer._id)}>
+//                         <Delete />
+//                       </IconButton>
+//                     </TableCell>
+//                   </TableRow>
+//                 ))
+//               )}
+//             </TableBody>
+//           </Table>
+//         </TableContainer>
+//       )}
+
+//       {showLoader && (
+//         <Backdrop open={showLoader} sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+//           <CircularProgress color="inherit" />
+//         </Backdrop>
+//       )}
+
+// <Dialog open={open} onClose={handleModalClose}>
+//   <DialogTitle>Add New Customer</DialogTitle>
+//   <DialogContent>
+//     <TextField
+//       label="Customer Name"
+//       fullWidth
+//       name="customerName"
+//       value={newCustomerData.customerName}
+//       onChange={(e) =>
+//         setNewCustomerData({
+//           ...newCustomerData,
+//           customerName: e.target.value,
+//         })
+//       }
+//     />
+//     <TextField
+//       label="Email"
+//       fullWidth
+//       name="email"
+//       value={newCustomerData.email}
+//       onChange={(e) =>
+//         setNewCustomerData({
+//           ...newCustomerData,
+//           email: e.target.value,
+//         })
+//       }
+//     />
+//     <TextField
+//       label="Phone Number"
+//       fullWidth
+//       name="phone_number"
+//       value={newCustomerData.phone_number}
+//       onChange={(e) =>
+//         setNewCustomerData({
+//           ...newCustomerData,
+//           phone_number: e.target.value,
+//         })
+//       }
+//     />
+//     <TextField
+//       label="Password"
+//       type="password"
+//       fullWidth
+//       name="password"
+//       value={newCustomerData.password}
+//       onChange={(e) =>
+//         setNewCustomerData({
+//           ...newCustomerData,
+//           password: e.target.value,
+//         })
+//       }
+//     />
+//   </DialogContent>
+//   <DialogActions>
+//     <Button onClick={handleModalClose}>Cancel</Button>
+//     <Button
+//       sx={{ backgroundColor: "#11047A" }}
+//       variant="contained"
+//       color="primary"
+//       onClick={handleAddCustomer}
+//     >
+//       Add Customer
+//     </Button>
+//   </DialogActions>
+// </Dialog>
+//     </Container>
+//   );
+// };
+
+// export default function Customers() {
+//   const theme = createTheme();
+//   return (
+//     <ThemeProvider theme={theme}>
+//       <Box pt={{ base: "180px", md: "80px", xl: "80px" }}>
+//         <CustomerList />
+//       </Box>
+//     </ThemeProvider>
+//   );
+// }
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -374,10 +697,15 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Backdrop,
+  CircularProgress,
+  Stack
 } from "@mui/material";
 import { Block, Delete } from "@mui/icons-material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { CircularProgress } from "@mui/material";
+import HideSourceIcon from '@mui/icons-material/HideSource';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import {SearchBar} from "../../../components/navbar/searchBar/SearchBar"
 
 const CustomerList = () => {
   const [open, setOpen] = React.useState(false);
@@ -390,8 +718,9 @@ const CustomerList = () => {
     setOpen(false);
   };
 
-  const [customers, setCustomers] = useState([]); // Initialize as an empty array
-  const [loading, setLoading] = useState(true); // Initialize loading state as true
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showLoader, setShowLoader] = useState(false); // New state variable to control the visibility of the loader
 
   const [newCustomerData, setNewCustomerData] = useState({
     customerName: "",
@@ -399,104 +728,115 @@ const CustomerList = () => {
     phone_number: "",
     password: "",
   });
-  
+
   const fetchCustomers = async () => {
     try {
-      // Fetch data from the API
       const response = await axios.get(
         `${BASE_URL}/customers/get-all-customers`
       );
-
-      // Extract customer data from the response
       const customerData = response.data.data;
-      console.log("API response data:", customerData); // Debugging statement
-      setCustomers(customerData); // Update customers state with the fetched data
-      setLoading(false); // Set loading state to false after fetching data
+      console.log("API response data:", customerData);
+      setCustomers(customerData);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching customers:", error);
-      setCustomers([]); // Set customers as an empty array if an error occurs
-      setLoading(false); // Set loading state to false if there's an error
+      setCustomers([]);
+      setLoading(false);
     }
   };
-  useEffect(() => {
 
+  useEffect(() => {
     fetchCustomers();
   }, []);
 
   const blockCustomer = async (customerId) => {
-    // Optimistically update the customer state to reflect the change immediately
+    setShowLoader(true); // Show the loader
     setCustomers((prevCustomers) =>
       prevCustomers.map((customer) =>
-        customer._id === customerId ? { ...customer, isBlocked: true } : customer
+        customer._id === customerId
+          ? { ...customer, isBlocked: true }
+          : customer
       )
     );
 
     try {
-      // Make API request to block the customer
       await axios.post(`${BASE_URL}/customers/block-customer`, {
         customerId: customerId,
       });
+      
     } catch (error) {
       console.error("Error blocking customer:", error);
-      // Revert the change in case of an error
       setCustomers((prevCustomers) =>
         prevCustomers.map((customer) =>
-          customer._id === customerId ? { ...customer, isBlocked: false } : customer
+          customer._id === customerId
+            ? { ...customer, isBlocked: false }
+            : customer
         )
       );
     }
+    fetchCustomers()
+    setShowLoader(false); // Hide the loader after the action is completed
   };
 
   const unblockCustomer = async (customerId) => {
-    // Optimistically update the customer state to reflect the change immediately
+    setShowLoader(true); // Show the loader
     setCustomers((prevCustomers) =>
       prevCustomers.map((customer) =>
-        customer._id === customerId ? { ...customer, isBlocked: false } : customer
+        customer._id === customerId
+          ? { ...customer, isBlocked: false }
+          : customer
       )
     );
 
     try {
-      // Make API request to unblock the customer
       await axios.post(`${BASE_URL}/customers/unblock-customer`, {
         customerId: customerId,
       });
     } catch (error) {
       console.error("Error unblocking customer:", error);
-      // Revert the change in case of an error
       setCustomers((prevCustomers) =>
         prevCustomers.map((customer) =>
-          customer._id === customerId ? { ...customer, isBlocked: true } : customer
+          customer._id === customerId
+            ? { ...customer, isBlocked: true }
+            : customer
         )
       );
     }
+    fetchCustomers()
+    setShowLoader(false); // Hide the loader after the action is completed
   };
 
   const deleteCustomer = async (customerId) => {
+    setShowLoader(true); // Show the loader
     try {
-      // Make API request to delete the customer
       await axios.post(`${BASE_URL}/customers/delete-customer`, {
         customerId: customerId,
       });
 
-      // Remove the customer from the customer state
-      setCustomers((prevCustomers) => prevCustomers.filter((customer) => customer._id !== customerId));
+      setCustomers((prevCustomers) =>
+        prevCustomers.filter((customer) => customer._id !== customerId)
+      );
     } catch (error) {
       console.error("Error deleting customer:", error);
     }
+    setShowLoader(false); // Hide the loader after the action is completed
   };
 
   const createCustomer = async (newCustomerData) => {
     try {
-      // Set the headers with the API key
       const headers = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
       };
-  
-      // Make API request to create the new customer
-      await axios.post(`${BASE_URL}/customers/register-customer`, newCustomerData, { headers });
-  
-      // Close the modal
+
+      await axios.post(
+        `${BASE_URL}/customers/register-customer`,
+        newCustomerData,
+        {
+          headers,
+        }
+      );
+
       handleModalClose();
     } catch (error) {
       console.error("Error creating customer:", error);
@@ -504,18 +844,14 @@ const CustomerList = () => {
   };
 
   const handleAddCustomer = async () => {
-    // Implement the logic to add a new customer
     try {
-      // Create the new customer data object from the state
       const customerData = {
         customerName: newCustomerData.customerName,
         email: newCustomerData.email,
         phone_number: newCustomerData.phone_number,
         password: newCustomerData.password,
       };
-  
-      console.log("Customer Data:", customerData); // Add this line to check the data
-  
+
       if (
         customerData.customerName &&
         customerData.email &&
@@ -524,20 +860,16 @@ const CustomerList = () => {
       ) {
         await createCustomer(customerData);
       } else {
-        // Handle the case when one or more fields are missing
         console.error("Missing data fields");
       }
 
-      // Show a loading state for a second before fetching customers again
-      setLoading(true);
+      setShowLoader(true); // Show the loader
       setTimeout(() => {
         setLoading(false);
-        fetchCustomers()
+        fetchCustomers();
         handleModalClose();
-        
-      }, 1000);
+      }, 2000);
 
-      // Reset the form fields after successfully adding the customer
       setNewCustomerData({
         customerName: "",
         email: "",
@@ -548,11 +880,14 @@ const CustomerList = () => {
       console.error("Error adding customer:", error);
       handleModalClose();
     }
+    setShowLoader(false); // Hide the loader after the action is completed
   };
 
   return (
     <Container>
       <Box mt={2} sx={{ pt: 3 }}>
+      <Stack direction="row" spacing={2}>
+
         <Button
           variant="contained"
           sx={{ backgroundColor: "#11047A" }}
@@ -560,12 +895,14 @@ const CustomerList = () => {
         >
           Add New Customer
         </Button>
+        <SearchBar/>
+        </Stack>
       </Box>
       <br />
       {loading ? (
         <CircularProgress color="primary" /> // Show the loader while fetching data
       ) : (
-        <TableContainer component={Paper} sx={{maxHeight:'400px'}}>
+        <TableContainer component={Paper} sx={{ maxHeight: "500px" }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -592,12 +929,14 @@ const CustomerList = () => {
                     <TableCell>{customer.isBlocked ? "Yes" : "No"}</TableCell>
                     <TableCell>
                       {customer.isBlocked ? (
-                        <IconButton onClick={() => unblockCustomer(customer._id)}>
-                          Unblock
+                        <IconButton
+                          onClick={() => unblockCustomer(customer._id)}
+                        >
+                          <RemoveCircleOutlineIcon/>
                         </IconButton>
                       ) : (
                         <IconButton onClick={() => blockCustomer(customer._id)}>
-                          Block
+                          <HideSourceIcon/>
                         </IconButton>
                       )}
                       <IconButton onClick={() => deleteCustomer(customer._id)}>
@@ -611,7 +950,6 @@ const CustomerList = () => {
           </Table>
         </TableContainer>
       )}
-
       <Dialog open={open} onClose={handleModalClose}>
         <DialogTitle>Add New Customer</DialogTitle>
         <DialogContent>
@@ -677,6 +1015,16 @@ const CustomerList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Sexy designed loader */}
+      {showLoader && (
+        <Backdrop
+          open={showLoader}
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
     </Container>
   );
 };
