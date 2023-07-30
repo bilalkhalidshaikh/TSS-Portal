@@ -180,7 +180,181 @@
 //   );
 // }
 
-import React from "react";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React from "react";
+// import {
+//   Box,
+//   Button,
+//   Container,
+//   Dialog,
+//   DialogActions,
+//   DialogContent,
+//   DialogTitle,
+//   IconButton,
+//   Paper,
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableHead,
+//   TableRow,
+//   TextField,
+//   Typography,
+// } from "@mui/material";
+// import { Block, Delete } from "@mui/icons-material";
+// import { useTheme } from "@mui/material/styles";
+// import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+// const CustomerList = () => {
+//   const [open, setOpen] = React.useState(false);
+//   const handleModalOpen = () => {
+//     setOpen(true);
+//   };
+//   const handleModalClose = () => {
+//     setOpen(false);
+//   };
+
+//   const customers = [
+//     {
+//       id: 1,
+//       name: "Mark Doe",
+//       email: "johndoe@example.com",
+//       phoneNumber: "1234567890",
+//       isActive: true,
+//       isBlocked: false,
+//     },
+//     {
+//       id: 2,
+//       name: "Abdul Haseeb",
+//       email: "abdul@verior.co",
+//       phoneNumber: "1234567890",
+//       isActive: true,
+//       isBlocked: false,
+//     },
+//     // Add more customer data as needed
+//   ];
+
+//   const blockCustomer = (customerId) => {
+//     // Implement the logic to block a customer
+//   };
+
+//   const deleteCustomer = (customerId) => {
+//     // Implement the logic to delete a customer
+//   };
+
+//   const handleAddCustomer = () => {
+//     // Implement the logic to add a new customer
+//     handleModalClose();
+//   };
+
+//   return (
+//     <Container>
+//       {/* <Typography variant="h4" gutterBottom>
+//         Customers
+//       </Typography> */}
+//       <Box mt={2} sx={{ pt: 3 }}>
+//         <Button
+//           variant="contained"
+//           sx={{ backgroundColor: "#11047A" }}
+//           onClick={handleModalOpen}
+//         >
+//           Add New Customer
+//         </Button>
+//       </Box>
+//       <br />
+//       <TableContainer component={Paper}>
+//         <Table>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell>Customer Name</TableCell>
+//               <TableCell>Email</TableCell>
+//               <TableCell>Phone Number</TableCell>
+//               <TableCell>Is Active</TableCell>
+//               <TableCell>Is Blocked</TableCell>
+//               <TableCell>Actions</TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {customers.map((customer) => (
+//               <TableRow key={customer.id}>
+//                 <TableCell>{customer.name}</TableCell>
+//                 <TableCell>{customer.email}</TableCell>
+//                 <TableCell>{customer.phoneNumber}</TableCell>
+//                 <TableCell>{customer.isActive ? "Yes" : "No"}</TableCell>
+//                 <TableCell>{customer.isBlocked ? "Yes" : "No"}</TableCell>
+//                 <TableCell>
+//                   <IconButton onClick={() => blockCustomer(customer.id)}>
+//                     <Block />
+//                   </IconButton>
+//                   <IconButton onClick={() => deleteCustomer(customer.id)}>
+//                     <Delete />
+//                   </IconButton>
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+
+//       <Dialog open={open} onClose={handleModalClose}>
+//         <DialogTitle>Add New Customer</DialogTitle>
+//         <DialogContent>
+//           <TextField label="Customer Name" fullWidth />
+//           <TextField label="Email" fullWidth />
+//           <TextField label="Phone Number" fullWidth />
+//           <TextField label="Password" type="password" fullWidth />
+//         </DialogContent>
+//         <DialogActions>
+//           <Button onClick={handleModalClose}>Cancel</Button>
+//           <Button
+//             sx={{ backgroundColor: "#11047A" }}
+//             variant="contained"
+//             color="primary"
+//             onClick={handleAddCustomer}
+//           >
+//             Add Customer
+//           </Button>
+//         </DialogActions>
+//       </Dialog>
+//     </Container>
+//   );
+// };
+
+// export default function Customers() {
+//   const theme = createTheme();
+//   return (
+//     <ThemeProvider theme={theme}>
+//       <Box pt={{ base: "180px", md: "80px", xl: "80px" }}>
+//         <CustomerList />
+//       </Box>
+//     </ThemeProvider>
+//   );
+// }
+
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -198,14 +372,14 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
 } from "@mui/material";
 import { Block, Delete } from "@mui/icons-material";
-import { useTheme } from "@mui/material/styles";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { CircularProgress } from "@mui/material";
 
 const CustomerList = () => {
   const [open, setOpen] = React.useState(false);
+  const BASE_URL = "https://api.raft-service.com";
   const handleModalOpen = () => {
     setOpen(true);
   };
@@ -213,32 +387,92 @@ const CustomerList = () => {
     setOpen(false);
   };
 
-  const customers = [
-    {
-      id: 1,
-      name: "Mark Doe",
-      email: "johndoe@example.com",
-      phoneNumber: "1234567890",
-      isActive: true,
-      isBlocked: false,
-    },
-    {
-      id: 2,
-      name: "Abdul Haseeb",
-      email: "abdul@verior.co",
-      phoneNumber: "1234567890",
-      isActive: true,
-      isBlocked: false,
-    },
-    // Add more customer data as needed
-  ];
+  const [customers, setCustomers] = useState([]); // Initialize as an empty array
+  const [loading, setLoading] = useState(true); // Initialize loading state as true
 
-  const blockCustomer = (customerId) => {
-    // Implement the logic to block a customer
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        // Fetch data from the API
+        const response = await axios.get(
+          "https://api.raft-service.com/customers/get-all-customers"
+        );
+
+        // Extract customer data from the response
+        const customerData = response.data.data;
+        console.log("API response data:", customerData); // Debugging statement
+        setCustomers(customerData); // Update customers state with the fetched data
+        setLoading(false); // Set loading state to false after fetching data
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+        setCustomers([]); // Set customers as an empty array if an error occurs
+        setLoading(false); // Set loading state to false if there's an error
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
+  const blockCustomer = async (customerId) => {
+    // Optimistically update the customer state to reflect the change immediately
+    setCustomers((prevCustomers) =>
+      prevCustomers.map((customer) =>
+        customer._id === customerId ? { ...customer, isBlocked: true } : customer
+      )
+    );
+
+    try {
+      // Make API request to block the customer
+      await axios.post(`${BASE_URL}/customers/block-customer`, {
+        customerId: customerId,
+      });
+    } catch (error) {
+      console.error("Error blocking customer:", error);
+      // Revert the change in case of an error
+      setCustomers((prevCustomers) =>
+        prevCustomers.map((customer) =>
+          customer._id === customerId ? { ...customer, isBlocked: false } : customer
+        )
+      );
+    }
   };
 
-  const deleteCustomer = (customerId) => {
-    // Implement the logic to delete a customer
+  const unblockCustomer = async (customerId) => {
+    // Optimistically update the customer state to reflect the change immediately
+    setCustomers((prevCustomers) =>
+      prevCustomers.map((customer) =>
+        customer._id === customerId ? { ...customer, isBlocked: false } : customer
+      )
+    );
+
+    try {
+      // Make API request to unblock the customer
+      await axios.post(`${BASE_URL}/customers/unblock-customer`, {
+        customerId: customerId,
+      });
+    } catch (error) {
+      console.error("Error unblocking customer:", error);
+      // Revert the change in case of an error
+      setCustomers((prevCustomers) =>
+        prevCustomers.map((customer) =>
+          customer._id === customerId ? { ...customer, isBlocked: true } : customer
+        )
+      );
+    }
+  };
+
+  const deleteCustomer = async (customerId) => {
+    try {
+      // Make API request to delete the customer
+      await axios.post(`${BASE_URL}/customers/delete-customer`, {
+        customerId: customerId,
+      });
+
+      // Remove the customer from the customer state
+      setCustomers((prevCustomers) => prevCustomers.filter((customer) => customer._id !== customerId));
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+    }
   };
 
   const handleAddCustomer = () => {
@@ -248,9 +482,6 @@ const CustomerList = () => {
 
   return (
     <Container>
-      {/* <Typography variant="h4" gutterBottom>
-        Customers
-      </Typography> */}
       <Box mt={2} sx={{ pt: 3 }}>
         <Button
           variant="contained"
@@ -261,39 +492,55 @@ const CustomerList = () => {
         </Button>
       </Box>
       <br />
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Customer Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone Number</TableCell>
-              <TableCell>Is Active</TableCell>
-              <TableCell>Is Blocked</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {customers.map((customer) => (
-              <TableRow key={customer.id}>
-                <TableCell>{customer.name}</TableCell>
-                <TableCell>{customer.email}</TableCell>
-                <TableCell>{customer.phoneNumber}</TableCell>
-                <TableCell>{customer.isActive ? "Yes" : "No"}</TableCell>
-                <TableCell>{customer.isBlocked ? "Yes" : "No"}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => blockCustomer(customer.id)}>
-                    <Block />
-                  </IconButton>
-                  <IconButton onClick={() => deleteCustomer(customer.id)}>
-                    <Delete />
-                  </IconButton>
-                </TableCell>
+      {loading ? (
+        <CircularProgress color="primary" /> // Show the loader while fetching data
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Customer Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Phone Number</TableCell>
+                <TableCell>Is Active</TableCell>
+                <TableCell>Is Blocked</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {customers.length === 0 ? ( // Check if customers is an empty array
+                <TableRow>
+                  <TableCell colSpan={6}>No customers found.</TableCell>
+                </TableRow>
+              ) : (
+                customers.map((customer) => (
+                  <TableRow key={customer._id}>
+                    <TableCell>{customer.customerName}</TableCell>
+                    <TableCell>{customer.email}</TableCell>
+                    <TableCell>{customer.phone_number}</TableCell>
+                    <TableCell>{customer.isActive ? "Yes" : "No"}</TableCell>
+                    <TableCell>{customer.isBlocked ? "Yes" : "No"}</TableCell>
+                    <TableCell>
+                      {customer.isBlocked ? (
+                        <IconButton onClick={() => unblockCustomer(customer._id)}>
+                          Unblock
+                        </IconButton>
+                      ) : (
+                        <IconButton onClick={() => blockCustomer(customer._id)}>
+                          Block
+                        </IconButton>
+                      )}
+                      <IconButton onClick={() => deleteCustomer(customer._id)}>
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       <Dialog open={open} onClose={handleModalClose}>
         <DialogTitle>Add New Customer</DialogTitle>
