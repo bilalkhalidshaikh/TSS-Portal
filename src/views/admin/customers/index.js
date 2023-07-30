@@ -353,6 +353,8 @@
 // }
 
 
+
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -380,6 +382,7 @@ import { CircularProgress } from "@mui/material";
 const CustomerList = () => {
   const [open, setOpen] = React.useState(false);
   const BASE_URL = "https://api.raft-service.com";
+  const API_KEY = "340304930490d9f0df90df90df9d0f9d0f"; // Replace this with your actual API key
   const handleModalOpen = () => {
     setOpen(true);
   };
@@ -390,25 +393,32 @@ const CustomerList = () => {
   const [customers, setCustomers] = useState([]); // Initialize as an empty array
   const [loading, setLoading] = useState(true); // Initialize loading state as true
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        // Fetch data from the API
-        const response = await axios.get(
-          "https://api.raft-service.com/customers/get-all-customers"
-        );
+  const [newCustomerData, setNewCustomerData] = useState({
+    customerName: "",
+    email: "",
+    phone_number: "",
+    password: "",
+  });
+  
+  const fetchCustomers = async () => {
+    try {
+      // Fetch data from the API
+      const response = await axios.get(
+        `${BASE_URL}/customers/get-all-customers`
+      );
 
-        // Extract customer data from the response
-        const customerData = response.data.data;
-        console.log("API response data:", customerData); // Debugging statement
-        setCustomers(customerData); // Update customers state with the fetched data
-        setLoading(false); // Set loading state to false after fetching data
-      } catch (error) {
-        console.error("Error fetching customers:", error);
-        setCustomers([]); // Set customers as an empty array if an error occurs
-        setLoading(false); // Set loading state to false if there's an error
-      }
-    };
+      // Extract customer data from the response
+      const customerData = response.data.data;
+      console.log("API response data:", customerData); // Debugging statement
+      setCustomers(customerData); // Update customers state with the fetched data
+      setLoading(false); // Set loading state to false after fetching data
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      setCustomers([]); // Set customers as an empty array if an error occurs
+      setLoading(false); // Set loading state to false if there's an error
+    }
+  };
+  useEffect(() => {
 
     fetchCustomers();
   }, []);
@@ -475,9 +485,69 @@ const CustomerList = () => {
     }
   };
 
-  const handleAddCustomer = () => {
+  const createCustomer = async (newCustomerData) => {
+    try {
+      // Set the headers with the API key
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${API_KEY}`,
+      };
+  
+      // Make API request to create the new customer
+      await axios.post(`${BASE_URL}/customers/register-customer`, newCustomerData, { headers });
+  
+      // Close the modal
+      handleModalClose();
+    } catch (error) {
+      console.error("Error creating customer:", error);
+    }
+  };
+
+  const handleAddCustomer = async () => {
     // Implement the logic to add a new customer
-    handleModalClose();
+    try {
+      // Create the new customer data object from the state
+      const customerData = {
+        customerName: newCustomerData.customerName,
+        email: newCustomerData.email,
+        phone_number: newCustomerData.phone_number,
+        password: newCustomerData.password,
+      };
+  
+      console.log("Customer Data:", customerData); // Add this line to check the data
+  
+      if (
+        customerData.customerName &&
+        customerData.email &&
+        customerData.phone_number &&
+        customerData.password
+      ) {
+        await createCustomer(customerData);
+      } else {
+        // Handle the case when one or more fields are missing
+        console.error("Missing data fields");
+      }
+
+      // Show a loading state for a second before fetching customers again
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        fetchCustomers()
+        handleModalClose();
+        
+      }, 1000);
+
+      // Reset the form fields after successfully adding the customer
+      setNewCustomerData({
+        customerName: "",
+        email: "",
+        phone_number: "",
+        password: "",
+      });
+    } catch (error) {
+      console.error("Error adding customer:", error);
+      handleModalClose();
+    }
   };
 
   return (
@@ -495,7 +565,7 @@ const CustomerList = () => {
       {loading ? (
         <CircularProgress color="primary" /> // Show the loader while fetching data
       ) : (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{maxHeight:'400px'}}>
           <Table>
             <TableHead>
               <TableRow>
@@ -545,10 +615,55 @@ const CustomerList = () => {
       <Dialog open={open} onClose={handleModalClose}>
         <DialogTitle>Add New Customer</DialogTitle>
         <DialogContent>
-          <TextField label="Customer Name" fullWidth />
-          <TextField label="Email" fullWidth />
-          <TextField label="Phone Number" fullWidth />
-          <TextField label="Password" type="password" fullWidth />
+          <TextField
+            label="Customer Name"
+            fullWidth
+            name="customerName"
+            value={newCustomerData.customerName}
+            onChange={(e) =>
+              setNewCustomerData({
+                ...newCustomerData,
+                customerName: e.target.value,
+              })
+            }
+          />
+          <TextField
+            label="Email"
+            fullWidth
+            name="email"
+            value={newCustomerData.email}
+            onChange={(e) =>
+              setNewCustomerData({
+                ...newCustomerData,
+                email: e.target.value,
+              })
+            }
+          />
+          <TextField
+            label="Phone Number"
+            fullWidth
+            name="phone_number"
+            value={newCustomerData.phone_number}
+            onChange={(e) =>
+              setNewCustomerData({
+                ...newCustomerData,
+                phone_number: e.target.value,
+              })
+            }
+          />
+          <TextField
+            label="Password"
+            type="password"
+            fullWidth
+            name="password"
+            value={newCustomerData.password}
+            onChange={(e) =>
+              setNewCustomerData({
+                ...newCustomerData,
+                password: e.target.value,
+              })
+            }
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleModalClose}>Cancel</Button>
