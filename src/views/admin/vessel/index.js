@@ -43,7 +43,7 @@
 //   );
 // }
 
-import React from "react";
+import React,{useState} from "react";
 import {
   Box,
   Button,
@@ -63,10 +63,13 @@ import {
   TextField,
   Typography,
   MenuItem,
+  Stack
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import {Link} from "react-router-dom"
+import SearchBar from "./../customers/SearchBar";
+
 
 
 const Vessel = () => {
@@ -77,6 +80,17 @@ const Vessel = () => {
   const handleModalClose = () => {
     setOpen(false);
   };
+
+  const [searchResults, setSearchResults] = useState([]);
+
+  const handleSearch = (searchTerm) => {
+    // Implement your search logic here, and update searchResults state accordingly.
+    // For example, you can fetch data from an API based on the search term and update the results.
+    // setSearchResults(updatedResults);
+
+    console.log(searchTerm);
+  };
+
 
   const [vessels, setVessels] = React.useState([
     {
@@ -108,14 +122,18 @@ const Vessel = () => {
         <br />
         <br />
         <Box mt={2}>
+        
+          <Stack direction="row" spacing={-48}>
           <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={handleModalOpen}
-            sx={{ backgroundColor: "#11047A" }}
-          >
-            Add New Vessel
-          </Button>
+          variant="contained"
+          startIcon={<Add />}
+          onClick={handleModalOpen}
+          sx={{ backgroundColor: "#11047A",borderRadius:'25px' }}
+        >
+          Add New Vessel
+        </Button>
+          <SearchBar onSearch={handleSearch} />
+        </Stack>
         </Box>
         <br />
         <TableContainer component={Paper}>

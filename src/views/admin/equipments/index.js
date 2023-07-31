@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import {
   Box,
   Button,
@@ -18,9 +18,11 @@ import {
   TextField,
   Typography,
   MenuItem,
+  Stack
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
+import SearchBar from "./../customers/SearchBar";
 
 const Equipments = () => {
   const [open, setOpen] = React.useState(false);
@@ -29,6 +31,15 @@ const Equipments = () => {
   };
   const handleModalClose = () => {
     setOpen(false);
+  };
+  const [searchResults, setSearchResults] = useState([]);
+
+  const handleSearch = (searchTerm) => {
+    // Implement your search logic here, and update searchResults state accordingly.
+    // For example, you can fetch data from an API based on the search term and update the results.
+    // setSearchResults(updatedResults);
+
+    console.log(searchTerm);
   };
 
   const [Equipmentss, setEquipmentss] = React.useState([
@@ -61,14 +72,18 @@ const Equipments = () => {
         <br />
         <br />
         <Box mt={2}>
+        
+          <Stack direction="row" spacing={-48}>
           <Button
             variant="contained"
             startIcon={<Add />}
             onClick={handleModalOpen}
-            sx={{ backgroundColor: "#11047A" }}
+            sx={{ backgroundColor: "#11047A" ,borderRadius:'25px'}}
           >
             Add New Equipments
           </Button>
+          <SearchBar onSearch={handleSearch} />
+        </Stack>
         </Box>
         <br />
         <TableContainer component={Paper}>

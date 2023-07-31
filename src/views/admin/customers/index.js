@@ -699,13 +699,13 @@ import {
   TextField,
   Backdrop,
   CircularProgress,
-  Stack
+  Stack,
 } from "@mui/material";
 import { Block, Delete } from "@mui/icons-material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import HideSourceIcon from '@mui/icons-material/HideSource';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import {SearchBar} from "../../../components/navbar/searchBar/SearchBar"
+import HideSourceIcon from "@mui/icons-material/HideSource";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import SearchBar from "./SearchBar"; // Path to the SearchBar component
 
 const CustomerList = () => {
   const [open, setOpen] = React.useState(false);
@@ -728,6 +728,15 @@ const CustomerList = () => {
     phone_number: "",
     password: "",
   });
+  const [searchResults, setSearchResults] = useState([]);
+
+  const handleSearch = (searchTerm) => {
+    // Implement your search logic here, and update searchResults state accordingly.
+    // For example, you can fetch data from an API based on the search term and update the results.
+    // setSearchResults(updatedResults);
+
+    console.log(searchTerm);
+  };
 
   const fetchCustomers = async () => {
     try {
@@ -763,7 +772,6 @@ const CustomerList = () => {
       await axios.post(`${BASE_URL}/customers/block-customer`, {
         customerId: customerId,
       });
-      
     } catch (error) {
       console.error("Error blocking customer:", error);
       setCustomers((prevCustomers) =>
@@ -774,7 +782,7 @@ const CustomerList = () => {
         )
       );
     }
-    fetchCustomers()
+    fetchCustomers();
     setShowLoader(false); // Hide the loader after the action is completed
   };
 
@@ -802,7 +810,7 @@ const CustomerList = () => {
         )
       );
     }
-    fetchCustomers()
+    fetchCustomers();
     setShowLoader(false); // Hide the loader after the action is completed
   };
 
@@ -885,17 +893,16 @@ const CustomerList = () => {
 
   return (
     <Container>
-      <Box mt={2} sx={{ pt: 3 }}>
-      <Stack direction="row" spacing={2}>
-
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: "#11047A" }}
-          onClick={handleModalOpen}
-        >
-          Add New Customer
-        </Button>
-        <SearchBar/>
+      <Box mt={2} sx={{ pt: 3 ,width:'100%'}} >
+        <Stack direction="row" spacing={-48}>
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: "#11047A" ,borderRadius:'25px'}}
+            onClick={handleModalOpen}
+          >
+            Add New Customer
+          </Button>
+          <SearchBar onSearch={handleSearch} />
         </Stack>
       </Box>
       <br />
@@ -932,11 +939,11 @@ const CustomerList = () => {
                         <IconButton
                           onClick={() => unblockCustomer(customer._id)}
                         >
-                          <RemoveCircleOutlineIcon/>
+                          <RemoveCircleOutlineIcon />
                         </IconButton>
                       ) : (
                         <IconButton onClick={() => blockCustomer(customer._id)}>
-                          <HideSourceIcon/>
+                          <HideSourceIcon />
                         </IconButton>
                       )}
                       <IconButton onClick={() => deleteCustomer(customer._id)}>
