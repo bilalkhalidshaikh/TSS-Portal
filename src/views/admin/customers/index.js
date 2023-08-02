@@ -731,17 +731,23 @@ const CustomerList = () => {
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = (searchTerm) => {
-    // Implement your search logic here, and update searchResults state accordingly.
-    // For example, you can fetch data from an API based on the search term and update the results.
-    // setSearchResults(updatedResults);
-
-    console.log(searchTerm);
+    // Update searchResults state based on the search term
+    const filteredCustomers = customers.filter((customer) =>
+      customer.customerName.toLowerCase().startsWith(searchTerm.toLowerCase())
+    );
+    setSearchResults(filteredCustomers);
   };
 
   const fetchCustomers = async () => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
+    };
+
     try {
       const response = await axios.get(
-        `${BASE_URL}/customers/get-all-customers`
+        `${BASE_URL}/customers/get-all-customers`,
+        { headers } // Pass the headers as the third argument
       );
       const customerData = response.data.data;
       console.log("API response data:", customerData);
@@ -769,9 +775,17 @@ const CustomerList = () => {
     );
 
     try {
-      await axios.post(`${BASE_URL}/customers/block-customer`, {
-        customerId: customerId,
-      });
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      };
+
+      await axios.post(
+        `${BASE_URL}/customers/block-customer`,
+        { customerId: customerId },
+        { headers }
+      );
+      fetchCustomers();
     } catch (error) {
       console.error("Error blocking customer:", error);
       setCustomers((prevCustomers) =>
@@ -782,7 +796,6 @@ const CustomerList = () => {
         )
       );
     }
-    fetchCustomers();
     setShowLoader(false); // Hide the loader after the action is completed
   };
 
@@ -797,9 +810,17 @@ const CustomerList = () => {
     );
 
     try {
-      await axios.post(`${BASE_URL}/customers/unblock-customer`, {
-        customerId: customerId,
-      });
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      };
+
+      await axios.post(
+        `${BASE_URL}/customers/unblock-customer`,
+        { customerId: customerId },
+        { headers }
+      );
+      fetchCustomers();
     } catch (error) {
       console.error("Error unblocking customer:", error);
       setCustomers((prevCustomers) =>
@@ -810,20 +831,27 @@ const CustomerList = () => {
         )
       );
     }
-    fetchCustomers();
     setShowLoader(false); // Hide the loader after the action is completed
   };
 
   const deleteCustomer = async (customerId) => {
     setShowLoader(true); // Show the loader
     try {
-      await axios.post(`${BASE_URL}/customers/delete-customer`, {
-        customerId: customerId,
-      });
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      };
+
+      await axios.post(
+        `${BASE_URL}/customers/delete-customer`,
+        { customerId: customerId },
+        { headers }
+      );
 
       setCustomers((prevCustomers) =>
         prevCustomers.filter((customer) => customer._id !== customerId)
       );
+      fetchCustomers();
     } catch (error) {
       console.error("Error deleting customer:", error);
     }
@@ -873,7 +901,7 @@ const CustomerList = () => {
 
       setShowLoader(true); // Show the loader
       setTimeout(() => {
-        setLoading(false);
+        // setLoading(false); // This line should be removed from here
         fetchCustomers();
         handleModalClose();
       }, 2000);
@@ -893,11 +921,11 @@ const CustomerList = () => {
 
   return (
     <Container>
-      <Box mt={2} sx={{ pt: 3 ,width:'100%'}} >
+      <Box mt={2} sx={{ pt: 3, width: "100%" }}>
         <Stack direction="row" spacing={-48}>
           <Button
             variant="contained"
-            sx={{ backgroundColor: "#11047A" ,borderRadius:'25px'}}
+            sx={{ backgroundColor: "#11047A", borderRadius: "25px" }}
             onClick={handleModalOpen}
           >
             Add New Customer
@@ -907,7 +935,7 @@ const CustomerList = () => {
       </Box>
       <br />
       {loading ? (
-        <CircularProgress color="primary" /> // Show the loader while fetching data
+        <CircularProgress color="primary" />
       ) : (
         <TableContainer component={Paper} sx={{ maxHeight: "500px" }}>
           <Table>
@@ -922,12 +950,44 @@ const CustomerList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.length === 0 ? ( // Check if customers is an empty array
-                <TableRow>
-                  <TableCell colSpan={6}>No customers found.</TableCell>
-                </TableRow>
+              {searchResults.length === 0 ? (
+                customers.length === 0 ? ( // Check if customers is an empty array
+                  <TableRow>
+                    <TableCell colSpan={6}>No customers found.</TableCell>
+                  </TableRow>
+                ) : (
+                  customers.map((customer) => (
+                    <TableRow key={customer._id}>
+                      <TableCell>{customer.customerName}</TableCell>
+                      <TableCell>{customer.email}</TableCell>
+                      <TableCell>{customer.phone_number}</TableCell>
+                      <TableCell>{customer.isActive ? "Yes" : "No"}</TableCell>
+                      <TableCell>{customer.isBlocked ? "Yes" : "No"}</TableCell>
+                      <TableCell>
+                        {customer.isBlocked ? (
+                          <IconButton
+                            onClick={() => unblockCustomer(customer._id)}
+                          >
+                            <RemoveCircleOutlineIcon />
+                          </IconButton>
+                        ) : (
+                          <IconButton
+                            onClick={() => blockCustomer(customer._id)}
+                          >
+                            <HideSourceIcon />
+                          </IconButton>
+                        )}
+                        <IconButton
+                          onClick={() => deleteCustomer(customer._id)}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )
               ) : (
-                customers.map((customer) => (
+                searchResults.map((customer) => (
                   <TableRow key={customer._id}>
                     <TableCell>{customer.customerName}</TableCell>
                     <TableCell>{customer.email}</TableCell>
@@ -937,16 +997,29 @@ const CustomerList = () => {
                     <TableCell>
                       {customer.isBlocked ? (
                         <IconButton
-                          onClick={() => unblockCustomer(customer._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            unblockCustomer(customer._id);
+                          }}
                         >
                           <RemoveCircleOutlineIcon />
                         </IconButton>
                       ) : (
-                        <IconButton onClick={() => blockCustomer(customer._id)}>
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            blockCustomer(customer._id);
+                          }}
+                        >
                           <HideSourceIcon />
                         </IconButton>
                       )}
-                      <IconButton onClick={() => deleteCustomer(customer._id)}>
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteCustomer(customer._id);
+                        }}
+                      >
                         <Delete />
                       </IconButton>
                     </TableCell>
@@ -957,9 +1030,11 @@ const CustomerList = () => {
           </Table>
         </TableContainer>
       )}
+
       <Dialog open={open} onClose={handleModalClose}>
         <DialogTitle>Add New Customer</DialogTitle>
         <DialogContent>
+        &nbsp;
           <TextField
             label="Customer Name"
             fullWidth
@@ -971,7 +1046,9 @@ const CustomerList = () => {
                 customerName: e.target.value,
               })
             }
+            autoComplete="name"
           />
+          &nbsp;
           <TextField
             label="Email"
             fullWidth
@@ -983,7 +1060,9 @@ const CustomerList = () => {
                 email: e.target.value,
               })
             }
+            autoComplete="email"
           />
+          &nbsp;
           <TextField
             label="Phone Number"
             fullWidth
@@ -995,7 +1074,9 @@ const CustomerList = () => {
                 phone_number: e.target.value,
               })
             }
+            autoComplete="number"
           />
+          &nbsp;
           <TextField
             label="Password"
             type="password"
@@ -1008,7 +1089,9 @@ const CustomerList = () => {
                 password: e.target.value,
               })
             }
+            autoComplete="password"
           />
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleModalClose}>Cancel</Button>
@@ -1023,7 +1106,7 @@ const CustomerList = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Sexy designed loader */}
+      {/* designed loader */}
       {showLoader && (
         <Backdrop
           open={showLoader}
