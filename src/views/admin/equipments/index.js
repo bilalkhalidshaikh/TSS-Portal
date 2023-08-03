@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -20,16 +20,15 @@ import {
   MenuItem,
   Stack,
 } from "@mui/material";
-import { Add, Delete ,Edit} from "@mui/icons-material";
+import { Add, Delete, Edit } from "@mui/icons-material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import SearchBar from "./../customers/SearchBar";
 import axios from "axios";
 
-
 const Equipments = () => {
   const [open, setOpen] = React.useState(false);
   const BASE_URL = "https://api.raft-service.com";
-const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
+  const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
 
   const handleModalOpen = () => {
     setOpen(true);
@@ -53,7 +52,6 @@ const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
   const [mva, setMva] = useState(null);
   const [unitPrice, setUnitPrice] = useState(null);
   const [expiryDate, setExpiryDate] = useState(null);
-  
 
   const fetchEquipments = async () => {
     const headers = {
@@ -62,9 +60,12 @@ const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
     };
 
     try {
-      const response = await axios.get(`${BASE_URL}/equipments/get-equipments`, {
-        headers,
-      });
+      const response = await axios.get(
+        `${BASE_URL}/equipments/get-equipments`,
+        {
+          headers,
+        }
+      );
       const equipmentData = response.data.data;
       setEquipments(equipmentData);
     } catch (error) {
@@ -76,7 +77,6 @@ const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
   useEffect(() => {
     fetchEquipments();
   }, []);
-
 
   const handleDeleteEquipments = async (equipmentId) => {
     const headers = {
@@ -101,24 +101,22 @@ const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
     }
   };
 
-
-
-
   const formatDate = (date) => {
     if (!date) return "";
     const year = date.getFullYear();
     const month = date.getMonth() + 1; // Month is 0-indexed
     const day = date.getDate();
-    return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    return `${year}-${month.toString().padStart(2, "0")}-${day
+      .toString()
+      .padStart(2, "0")}`;
   };
-  
 
   const handleAddEquipments = async () => {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${API_KEY}`,
     };
-  
+
     try {
       // Prepare the data to send in the request body
       const equipmentData = {
@@ -128,32 +126,39 @@ const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
         mva: mva,
         unitPrice: unitPrice,
       };
-  
+
       if (editEquipmentId) {
         // If an editEquipmentId is present, it means we are editing an existing equipment
         // Add the equipmentId to the request body
         equipmentData.id = editEquipmentId;
-  
+
         // Make the API call to edit the equipment
-        await axios.post(`${BASE_URL}/equipments/edit-equipment`, equipmentData, {
-          headers,
-        });
+        await axios.post(
+          `${BASE_URL}/equipments/edit-equipment`,
+          equipmentData,
+          {
+            headers,
+          }
+        );
       } else {
         // If editEquipmentId is not present, it means we are adding a new equipment
         // Make the API call to create a new equipment
-        await axios.post(`${BASE_URL}/equipments/create-equipment`, equipmentData, {
-          headers,
-        });
+        await axios.post(
+          `${BASE_URL}/equipments/create-equipment`,
+          equipmentData,
+          {
+            headers,
+          }
+        );
       }
-  
+
       fetchEquipments();
       handleModalClose();
     } catch (error) {
       console.error("Error adding/editing equipment:", error);
     }
   };
-  
-  
+
   const handleEditEquipment = (equipment) => {
     setEquipmentName(equipment.eq_name);
     setMva(equipment.mva);
@@ -162,11 +167,6 @@ const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
     setEditEquipmentId(equipment._id);
     handleModalOpen();
   };
-
-  
-
-
-
 
   const theme = createTheme();
   return (
@@ -191,80 +191,82 @@ const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
         </Box>
         <br />
         <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Equipments Name</TableCell>
-              <TableCell>Mva</TableCell>
-              <TableCell>Unit Price</TableCell>
-              <TableCell>Expiry Period</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {equipments.map((equipment) => (
-              <TableRow key={equipment._id}>
-                <TableCell>{equipment.eq_name}</TableCell>
-                <TableCell>{equipment.mva}</TableCell>
-                <TableCell>{equipment.unitPrice}</TableCell>
-                <TableCell>{equipment.expiry_period}</TableCell>
-           
-                <TableCell>
-  <IconButton onClick={() => handleEditEquipment(equipment)}>
-    <Edit />
-  </IconButton>
-  <IconButton onClick={() => handleDeleteEquipments(equipment._id)}>
-    <Delete />
-  </IconButton>
-</TableCell>
-
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Equipments Name</TableCell>
+                <TableCell>Mva</TableCell>
+                <TableCell>Unit Price</TableCell>
+                <TableCell>Expiry Period</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {equipments.map((equipment) => (
+                <TableRow key={equipment._id}>
+                  <TableCell>{equipment.eq_name}</TableCell>
+                  <TableCell>{equipment.mva}%</TableCell>
+                  <TableCell>{equipment.unitPrice}$</TableCell>
+                  <TableCell>{equipment.expiry_period}</TableCell>
 
-      <Dialog open={open} onClose={handleModalClose}>
-      <DialogTitle>{editEquipmentId ? "Edit Equipment" : "Add New Equipment"}</DialogTitle>
+                  <TableCell>
+                    <IconButton onClick={() => handleEditEquipment(equipment)}>
+                      <Edit />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDeleteEquipments(equipment._id)}
+                    >
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Dialog open={open} onClose={handleModalClose}>
+          <DialogTitle>
+            {editEquipmentId ? "Edit Equipment" : "Add New Equipment"}
+          </DialogTitle>
 
           <DialogContent>
-          &nbsp;
-          <TextField
-            label="Equipments Name"
-            fullWidth
-            value={equipmentName}
-            onChange={(e) => setEquipmentName(e.target.value)}
-          />
-          &nbsp;
-          <TextField
-            label="Mva"
-            type="number"
-            fullWidth
-            value={mva}
-            onChange={(e) => setMva(parseFloat(e.target.value))}
-          />
-          &nbsp;
-          <TextField
-            label="Unit Price"
-            type="number"
-            fullWidth
-            value={unitPrice}
-            onChange={(e) => setUnitPrice(parseFloat(e.target.value))}
-          />
-          &nbsp;
-          <TextField
-            label="Expiry Date"
-            type="date"
-            fullWidth
-            value={expiryDate ? formatDate(expiryDate) : ''}
-            onChange={(e) => setExpiryDate(new Date(e.target.value))}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        </DialogContent>
-        
-        
+            &nbsp;
+            <TextField
+              label="Equipments Name"
+              fullWidth
+              value={equipmentName}
+              onChange={(e) => setEquipmentName(e.target.value)}
+            />
+            &nbsp;
+            <TextField
+              label="Mva"
+              type="number"
+              fullWidth
+              value={mva}
+              onChange={(e) => setMva(parseFloat(e.target.value))}
+            />
+            &nbsp;
+            <TextField
+              label="Unit Price"
+              type="number"
+              fullWidth
+              value={unitPrice}
+              onChange={(e) => setUnitPrice(parseFloat(e.target.value))}
+            />
+            &nbsp;
+            <TextField
+              label="Expiry Date"
+              type="date"
+              fullWidth
+              value={expiryDate ? formatDate(expiryDate) : ""}
+              onChange={(e) => setExpiryDate(new Date(e.target.value))}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </DialogContent>
+
           <DialogActions>
             <Button onClick={handleModalClose}>Cancel</Button>
             <Button
@@ -273,15 +275,15 @@ const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
               color="primary"
               onClick={handleAddEquipments}
             >
-            {editEquipmentId ? "Edit Equipment" : "Add Equipment"}
+              {editEquipmentId ? "Edit Equipment" : "Add Equipment"}
             </Button>
-            </DialogActions>
-            </Dialog>
-            </Container>
-            </ThemeProvider>
-            );
-          };
-          // Add Equipments
+          </DialogActions>
+        </Dialog>
+      </Container>
+    </ThemeProvider>
+  );
+};
+// Add Equipments
 // <DialogTitle>Add New Equipments</DialogTitle>
 // <TableCell>
 // <IconButton onClick={() => handleDeleteEquipments(equipment._id)}>

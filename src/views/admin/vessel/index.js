@@ -890,8 +890,7 @@ const Vessel = () => {
               <TableCell>Type</TableCell>
               <TableCell>Owner Name</TableCell>
               <TableCell>Created At</TableCell>
-              <TableCell>Enable</TableCell>
-              <TableCell>Disable</TableCell>
+              <TableCell>Active</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -916,7 +915,6 @@ const Vessel = () => {
                       locale: enGB
                     })}
                   </TableCell>
-                  <TableCell> {vessel.isBlocked ? "Yes" : "No" }</TableCell>
                   <TableCell> {vessel.isBlocked ? "No" : "Yes" }</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleDeleteVessel(vessel._id)}>

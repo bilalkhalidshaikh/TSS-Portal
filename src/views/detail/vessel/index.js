@@ -66,7 +66,6 @@
 //   );
 // }
 
-
 // const RootContainer = styled('div')(({ theme }) => ({
 //   padding: '20px',
 // }));
@@ -145,7 +144,6 @@
 //     },
 //   });
 
-
 //   const [equipopen, setEquipOpen] = React.useState(false);
 //   const handleEquipModalOpen = () => {
 //     setOpen(true);
@@ -170,7 +168,6 @@
 //     // Implement the logic to add a new Equipments
 //     handleEquipModalClose();
 //   };
-
 
 //   return (
 //     <ThemeProvider theme={theme}>
@@ -435,7 +432,7 @@
 //               <TextField label="Mva" type="number" fullWidth />
 //               <TextField label="Unit Price" type="number" fullWidth />
 //               <TextField label="Expiry Date" type="number" fullWidth />
-           
+
 //             </DialogContent>
 //             <DialogActions>
 //               <Button onClick={handleEquipModalClose}>Cancel</Button>
@@ -456,9 +453,6 @@
 // };
 
 // export default VesselDetail;
-
-
-
 
 
 
@@ -487,7 +481,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import KayakingIcon from "@mui/icons-material/Kayaking";
 // import { Block, Delete, Add, MoreVert,MdShop } from '@mui/icons-material';
@@ -504,42 +498,10 @@ import { ship } from "assets/img";
 import CustomFormDialog from "components/modal/CustomAddEquipment";
 import CustomRaftFormDialog from "components/modal/CustomAddRaft";
 import { withRouter } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
+import { useHistory } from 'react-router-dom';
 
 
-function ButtonAppBar() {
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ backgroundColor: "#11047A !important" }}>
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <Link to="/admin/vessel">
-              {" "}
-              <SailingIcon />
-            </Link>
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Vessel Name
-          </Typography>
-          <Stack direction="row" spacing={2}>
-            <Button color="inherit" variant="outlined">
-              Disable
-            </Button>
-            <Button color="inherit" variant="outlined">
-              Delete
-            </Button>
-          </Stack>
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
-}
 
 const RootContainer = styled("div")(({ theme }) => ({
   padding: "20px",
@@ -601,12 +563,12 @@ const VesselDetail = (props) => {
   const [equipOpen, setEquipOpen] = React.useState(false); // For another modal
   const [vesselData, setVesselData] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(true);
-
+  const history = useHistory();
   const [vesselId, setVesselId] = React.useState(null); // Initialize as null or any other appropriate value
 
   const BASE_URL = "https://api.raft-service.com";
   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
-  
+
   useEffect(() => {
     // Get the vesselId from the URL parameters
     const { vesselId } = props.match.params;
@@ -614,9 +576,7 @@ const VesselDetail = (props) => {
     setVesselId(vesselId);
   }, [props.match.params]);
 
-  useEffect(() => {
-    
-  }, [vesselId]);
+  useEffect(() => {}, [vesselId]);
 
   console.log("Vessel ID:", vesselId);
 
@@ -635,29 +595,65 @@ const VesselDetail = (props) => {
   const handleOpen = () => {
     setOpen(true);
   };
-  
+
   const handleClose = () => {
     setOpen(false);
   };
-  
+
   const handleEquipModalOpen = () => {
     setEquipOpen(true);
   };
-  
+
   const handleEquipModalClose = () => {
     setEquipOpen(false);
   };
-  
+
+  // const fetchVesselInfo = async () => {
+  //   setIsLoading(true); // Show the loader while fetching data
+
+  //   // Check if vesselId is not null before making the API call
+  //   if (vesselId !== null) {
+  //     const headers = {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `Bearer ${API_KEY}`,
+  //     };
+
+  //       try {
+  //       const response = await vesselId &&  axios.get(
+  //         `${BASE_URL}/vessel/get-vessel-info/${vesselId}`,
+  //         {
+  //           headers,
+  //         }
+  //       );
+
+  //       // const vesselInfo = response.data.data;
+  //       // setVesselData(response&&response.data.data);
+  //       console.log("response here", response)
+  //     } catch (error) {
+  //       console.error('Error fetching vessel information:', error);
+  //       setVesselData({});
+  //     } finally {
+  //       setIsLoading(false); // Hide the loader after data is fetched (either success or error)
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // Fetch the vessel information when vesselId changes
+  //   vesselId &&
+  //   fetchVesselInfo();
+  // }, [vesselId]);
+
   const fetchVesselInfo = async () => {
     setIsLoading(true); // Show the loader while fetching data
-  
+
     // Check if vesselId is not null before making the API call
     if (vesselId !== null) {
       const headers = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
       };
-  
+
       try {
         const response = await axios.get(
           `${BASE_URL}/vessel/get-vessel-info/${vesselId}`,
@@ -665,23 +661,26 @@ const VesselDetail = (props) => {
             headers,
           }
         );
-  
+
+        // Access the data property directly from the response object
         const vesselInfo = response.data.data;
         setVesselData(vesselInfo);
+
+        console.log("response here", vesselInfo);
       } catch (error) {
-        console.error('Error fetching vessel information:', error);
+        console.error("Error fetching vessel information:", error);
         setVesselData({});
       } finally {
         setIsLoading(false); // Hide the loader after data is fetched (either success or error)
       }
     }
   };
-  
+
   useEffect(() => {
     // Fetch the vessel information when vesselId changes
-    fetchVesselInfo();
+    vesselId && fetchVesselInfo();
   }, [vesselId]);
-  
+
   const [Equipmentss, setEquipmentss] = React.useState([
     {
       id: 1,
@@ -699,10 +698,149 @@ const VesselDetail = (props) => {
     handleEquipModalClose();
   };
 
+  const vesselName = vesselData?.vesselName || "Ship98";
+  const [vessels, setVessels] = React.useState([]);
+
+  const fetchVessels = async () => {
+    setIsLoading(true);
+    // Replace BASE_URL with your actual API base URL
+    // const BASE_URL = "https://api.example.com";
+    // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
+    };
+
+    try {
+      const response = await axios.get(`${BASE_URL}/vessel/get-all-vessels`, {
+        headers,
+      });
+      const vesselData = response.data.data;
+      setVessels(vesselData);
+    } catch (error) {
+      console.error("Error fetching vessels:", error);
+      setVessels([]);
+    } finally {
+      setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
+    }
+  };
+  useEffect(() => {
+    fetchVessels();
+  }, []);
+
+//   <Typography variant="body1" color="text.secondary">
+//   {vesselData.vesselDescription || "No description available"}
+// </Typography>
+
+function ButtonAppBar() {
+  const handleDeleteVessel = async () => {
+    setIsLoading(true);
+    // Replace BASE_URL with your actual API base URL
+    // const BASE_URL = "https://api.example.com";
+    // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
+    };
+
+    try {
+      await axios.post(
+        `${BASE_URL}/vessel/delete-vessel`,
+        { vesselId },
+        {
+          headers,
+        }
+      );
+      // Remove the deleted vessel from the state
+      setVessels((prevVessels) =>
+        prevVessels.filter((vessel) => vessel._id !== vesselId)
+      );
+     history.push("/admin/vessel")
+
+    } catch (error) {
+      console.error("Error deleting vessel:", error);
+    } finally {
+      setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
+    }
+  };
+
+  const handleDisableVessel = async () => {
+    setIsLoading(true);
+    // Replace BASE_URL with your actual API base URL
+    // const BASE_URL = "https://api.example.com";
+    // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
+    };
+
+    try {
+      await axios.post(
+        `${BASE_URL}/vessel/disable-vessel`,
+        { vesselId },
+        {
+          headers,
+        }
+      );
+      // Update the isBlocked property of the vessel in the state
+      setVessels((prevVessels) =>
+        prevVessels.map((vessel) =>
+          vessel._id === vesselId ? { ...vessel, isBlocked: true } : vessel
+        )
+      );
+    } catch (error) {
+      console.error("Error disabling vessel:", error);
+    } finally {
+      setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
+    }
+  };
   return (
-    //   <Typography variant="body1" color="text.secondary">
-    //   {vesselData.vesselDescription || 'No description available'}
-    // </Typography>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" sx={{ backgroundColor: "#11047A !important" }}>
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <Link to="/admin/vessel">
+              {" "}
+              <SailingIcon />
+            </Link>
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+       {   Array.isArray(vesselData) &&
+          vesselData.map((vessel) => (
+            <React.Fragment key={vessel._id}>
+            {vessel.vesselName}
+            </React.Fragment>          
+          ))}
+          </Typography>
+          <Stack direction="row" spacing={2}>
+            <Button color="inherit" variant="outlined"
+            onClick={handleDisableVessel}
+            >
+              Disable
+            </Button>
+            <Button color="inherit" variant="outlined" 
+            onClick={handleDeleteVessel}
+            >
+              Delete
+            </Button>
+          </Stack>
+        </Toolbar>
+      </AppBar>
+    </Box>
+  );
+}
+
+
+  return (
     <ThemeProvider theme={theme}>
       <RootContainer>
         <br />
@@ -729,11 +867,10 @@ const VesselDetail = (props) => {
             // elevation={}
           >
             {/* <Paper elevation={0} > */}
-          Vessel Info :
-            <br />
-            <br />
-            
-             {/* Display vessel information here */}
+            Vessel Info :
+            <br/>
+            {vesselData.vesselDescription || "No description available"}
+            {/* Display vessel information here */}
             {/* </Paper> */}
             {/* <Paper />
       <Paper elevation={3} /> */}
@@ -741,34 +878,51 @@ const VesselDetail = (props) => {
           <br />
 
           <TableContainerStyled component={Paper}>
-          <Table>
-            <TableHead>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Registration Number</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Owner</TableCell>
+                  <TableCell>Rafts</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+           
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Registration Number</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Owner</TableCell>
-                <TableCell>Rafts</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-              {vesselData.length === 0 ? 
-               
-                <TableCell>Nothing to see here</TableCell>
-              :
-              <>
-              <TableCell>{vesselData?.vesselName || 'Dummy54 Name'}</TableCell>
-              <TableCell>{vesselData?.registrationNumber || 'Dummy Registration Number'}</TableCell>
-              <TableCell>{vesselData?.vesselType || 'Dummy Type'}</TableCell>
-              <TableCell>{vesselData?.ownerInfo?.customerName || 'Dummy Owner'}</TableCell>
-              <TableCell>{vesselData?.rafts?.length || 'Dummy Rafts'}</TableCell>
-              </>
-              }
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainerStyled>
+  {Array.isArray(vesselData) && vesselData.length === 0 ? (
+    <TableCell>Nothing to see here</TableCell>
+  ) : (
+    Array.isArray(vesselData) &&
+    vesselData.map((vessel) => (
+      // Use parentheses to wrap the JSX elements returned by the map function
+      // and don't forget to add a 'key' prop to the top-level element in the map function
+      <React.Fragment key={vessel._id}>
+        <TableCell>
+          {vessel?.vesselName || "Dummy54 Name"}
+        </TableCell>
+        <TableCell>
+          {vessel?.registrationNumber || "Dummy Registration Number"}
+        </TableCell>
+        <TableCell>
+          {vessel?.vesselType || "Dummy Type"}
+        </TableCell>
+        <TableCell>
+          {vessel?.ownerInfo?.customerName || "Dummy Owner"}
+        </TableCell>
+        <TableCell>
+          {vessel?.rafts?.length || "97"}
+        </TableCell>
+      </React.Fragment>
+    ))
+  )}
+</TableRow>
+
+
+              </TableBody>
+            </Table>
+          </TableContainerStyled>
 
           {/* <div>
           <Typography variant="subtitle1">Rafts</Typography>
@@ -998,7 +1152,6 @@ const VesselDetail = (props) => {
           </Dialog> */}
         </Container>
         {isLoading && <CircularProgress color="primary" />}
-
       </RootContainer>
     </ThemeProvider>
   );
