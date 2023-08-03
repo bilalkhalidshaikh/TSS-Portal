@@ -92,7 +92,8 @@ const routes = [
     // layout: "/rtl",
     layout: "/admin",
     // path: "/rtl-default",
-    path: "/vessel-detail",
+    // path: "/vessel-detail",
+    path: "/vessel-detail/:vesselId", // Update path to include /:vesselId
     // icon: <Icon as={MdContacts} width='20px' height='20px' color='inherit' />,
     // component: RTL,
     component: VesselDetail,

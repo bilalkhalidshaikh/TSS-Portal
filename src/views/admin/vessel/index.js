@@ -194,6 +194,420 @@
 
 // export default Vessel;
 
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import {
+//   Box,
+//   Button,
+//   Container,
+//   Dialog,
+//   DialogActions,
+//   DialogContent,
+//   DialogTitle,
+//   IconButton,
+//   Paper,
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableHead,
+//   TableRow,
+//   TextField,
+//   Typography,
+//   MenuItem,
+//   Stack,
+// } from "@mui/material";
+// import { Add, Delete, Block, CheckCircle } from "@mui/icons-material";
+// import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
+// import { Link } from "react-router-dom";
+// import SearchBar from "../customers/SearchBar";
+// import { CircularProgress } from "@mui/material";
+
+
+
+// const Vessel = () => {
+//   const [open, setOpen] = React.useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   const handleModalOpen = () => {
+//     setOpen(true);
+//   };
+//   const handleModalClose = () => {
+//     setOpen(false);
+//   };
+
+//   const [searchResults, setSearchResults] = useState([]);
+
+//   const [vesselName, setVesselName] = useState("");
+//   const [registrationNumber, setRegistrationNumber] = useState("");
+//   const [vesselType, setVesselType] = useState("");
+//   const [vesselOwner, setVesselOwner] = useState("");
+//   const [customers, setCustomers] = useState([]);
+
+//   const BASE_URL = "https://api.raft-service.com";
+//   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
+
+//   const handleSearch = (searchTerm) => {
+//     // Implement your search logic here, and update searchResults state accordingly.
+//     // For example, you can fetch data from an API based on the search term and update the results.
+//     // setSearchResults(updatedResults);
+
+//     console.log(searchTerm);
+//   };
+
+//   useEffect(() => {
+//     const fetchCustomers = async () => {
+//       const headers = {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${API_KEY}`,
+//       };
+//       try {
+//         const response = await axios.get(
+//           "https://api.raft-service.com/customers/get-all-customers",
+//           { headers }
+//         );
+//         // Assuming the response data is an array of customers
+//         setCustomers(response.data.data); // Set customers state with the 'data' property of the response
+//         console.log(response.data.data); // Check the data in the console
+//       } catch (error) {
+//         console.error("Error fetching customers:", error);
+//       }
+//     };
+//     fetchCustomers();
+//   }, []);
+
+//   useEffect(() => {
+//     console.log(customers);
+//   }, [customers]);
+
+//   const [vessels, setVessels] = React.useState([]);
+
+//   const fetchVessels = async () => {
+//     setIsLoading(true)
+//     // Replace BASE_URL with your actual API base URL
+//     // const BASE_URL = "https://api.example.com";
+//     // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+
+//     const headers = {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${API_KEY}`,
+//     };
+
+//     try {
+//       const response = await axios.get(`${BASE_URL}/vessel/get-all-vessels`, {
+//         headers,
+//       });
+//       const vesselData = response.data.data;
+//       setVessels(vesselData);
+//     } catch (error) {
+//       console.error("Error fetching vessels:", error);
+//       setVessels([]);
+//     }finally {
+//       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchVessels();
+//   }, []);
+
+//   const handleDeleteVessel = async (vesselId) => {
+//     setIsLoading(true)
+//     // Replace BASE_URL with your actual API base URL
+//     // const BASE_URL = "https://api.example.com";
+//     // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+
+//     const headers = {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${API_KEY}`,
+//     };
+
+//     try {
+//       await axios.post(
+//         `${BASE_URL}/vessel/delete-vessel`,
+//         { vesselId },
+//         {
+//           headers,
+//         }
+//       );
+//       // Remove the deleted vessel from the state
+//       setVessels((prevVessels) =>
+//         prevVessels.filter((vessel) => vessel._id !== vesselId)
+//       );
+//     } catch (error) {
+//       console.error("Error deleting vessel:", error);
+//     }finally {
+//       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
+//     }
+//   };
+
+//   const handleDisableVessel = async (vesselId) => {
+//     setIsLoading(true)
+//     // Replace BASE_URL with your actual API base URL
+//     // const BASE_URL = "https://api.example.com";
+//     // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+
+//     const headers = {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${API_KEY}`,
+//     };
+
+//     try {
+//       await axios.post(
+//         `${BASE_URL}/vessel/disable-vessel`,
+//         { vesselId },
+//         {
+//           headers,
+//         }
+//       );
+//       // Update the isBlocked property of the vessel in the state
+//       setVessels((prevVessels) =>
+//         prevVessels.map((vessel) =>
+//           vessel._id === vesselId ? { ...vessel, isBlocked: true } : vessel
+//         )
+//       );
+//     } catch (error) {
+//       console.error("Error disabling vessel:", error);
+//     }finally {
+//       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
+//     }
+//   };
+
+//   const handleEnableVessel = async (vesselId) => {
+//     setIsLoading(true)
+//     // Replace BASE_URL with your actual API base URL
+//     // const BASE_URL = "https://api.example.com";
+//     // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+
+//     const headers = {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${API_KEY}`,
+//     };
+
+//     try {
+//       await axios.post(
+//         `${BASE_URL}/vessel/enable-vessel`,
+//         { vesselId },
+//         {
+//           headers,
+//         }
+//       );
+//       // Update the isBlocked property of the vessel in the state
+//       setVessels((prevVessels) =>
+//         prevVessels.map((vessel) =>
+//           vessel._id === vesselId ? { ...vessel, isBlocked: false } : vessel
+//         )
+//       );
+//     } catch (error) {
+//       console.error("Error enabling vessel:", error);
+//     }finally {
+//       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
+//     }
+//   };
+
+  
+
+//   const handleAddVessel = async () => {
+//     setIsLoading(true); // Set isLoading to true before making the API call
+  
+//     const headers = {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${API_KEY}`,
+//     };
+  
+//     try {
+//       // Prepare the data to send in the request body
+//       const vesselData = {
+//         vesselName,
+//         registrationNumber,
+//         vesselType,
+//         vesselOwner, // Make sure 'vesselOwner' contains the selected customer ID, not the name
+//       };
+  
+//       // Make the API call to create a new vessel
+//       const response = await axios.post(
+//         `${BASE_URL}/vessel/create-vessel`,
+//         vesselData,
+//         { headers }
+//       );
+  
+//       // Handle the API response (e.g., show success message)
+//       console.log("New vessel added:", response.data);
+  
+//       // Clear the form fields after successful submission
+//       setVesselName("");
+//       setRegistrationNumber("");
+//       setVesselType("");
+//       setVesselOwner(""); // Clear the selected customer ID
+  
+//       fetchVessels();
+//       handleModalClose();
+//     } catch (error) {
+//       console.error("Error adding vessel:", error);
+//     } finally {
+//       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
+//     }
+//   };
+  
+
+//   const theme = createTheme();
+//   return (
+//     <ThemeProvider theme={theme}>
+//       <Container>
+//         <br />
+//         <br />
+//         <br />
+//         <br />
+//         <Box mt={2}>
+//           <Stack direction="row" spacing={-48}>
+//             <Button
+//               variant="contained"
+//               startIcon={<Add />}
+//               onClick={handleModalOpen}
+//               sx={{ backgroundColor: "#11047A", borderRadius: "25px" }}
+//             >
+//               Add New Vessel
+//             </Button>
+//             <SearchBar onSearch={handleSearch} />
+//           </Stack>
+//         </Box>
+//         <br />
+//         <TableContainer component={Paper}>
+//           <Table>
+//             <TableHead>
+//               <TableRow>
+//                 <TableCell>Vessel Name</TableCell>
+//                 <TableCell>Registration Number</TableCell>
+//                 <TableCell>Type</TableCell>
+//                 <TableCell>Owner Name</TableCell>
+//                 <TableCell>Created At</TableCell>
+//                 <TableCell>Actions</TableCell>
+//               </TableRow>
+//             </TableHead>
+//             <TableBody>
+//               {vessels.length === 0 ? (
+//                 <TableRow>
+//                   <TableCell colSpan={6}>No Vessels found.</TableCell>
+//                 </TableRow>
+//               ) : (
+//                 vessels.map((vessel) => (
+//                   <TableRow key={vessel._id}>
+//                     <TableCell>
+//                       <Link to={`/admin/vessel-detail/${vessel._id}`}>
+//                         {vessel.vesselName}
+//                       </Link>
+//                     </TableCell>
+//                     <TableCell>{vessel.registrationNumber}</TableCell>
+//                     <TableCell>{vessel.vesselType}</TableCell>
+//                     <TableCell>{vessel.ownerInfo.customerName}</TableCell>
+//                     <TableCell>{vessel.ownerInfo.created_at}</TableCell>
+//                     <TableCell>
+//                       <IconButton
+//                         onClick={() => handleDeleteVessel(vessel._id)}
+//                       >
+//                         <Delete />
+//                       </IconButton>
+//                       {vessel.isBlocked ? (
+//                         <IconButton
+//                           onClick={() => handleEnableVessel(vessel._id)}
+//                         >
+//                           <CheckCircle />
+//                         </IconButton>
+//                       ) : (
+//                         <IconButton
+//                           onClick={() => handleDisableVessel(vessel._id)}
+//                         >
+//                           <Block />
+//                         </IconButton>
+//                       )}
+//                     </TableCell>
+//                   </TableRow>
+//                 ))
+//               )}
+//             </TableBody>
+//           </Table>
+//         </TableContainer>
+
+//         <Dialog open={open} onClose={handleModalClose}>
+//           <DialogTitle>Add New Vessel</DialogTitle>
+//           <DialogContent>
+//             <TextField
+//               label="Vessel Name"
+//               fullWidth
+//               value={vesselName}
+//               onChange={(e) => setVesselName(e.target.value)}
+//             />
+//             &nbsp;
+//             <TextField
+//               label="Registration Number"
+//               fullWidth
+//               value={registrationNumber}
+//               onChange={(e) => setRegistrationNumber(e.target.value)}
+//             />
+//             &nbsp;
+//             <TextField
+//               label="Type"
+//               fullWidth
+//               value={vesselType}
+//               onChange={(e) => setVesselType(e.target.value)}
+//             />
+//             &nbsp;
+//             <TextField
+//             select
+//             label="Owner Name"
+//             fullWidth
+//             value={vesselOwner}
+//             onChange={(e) => {setVesselOwner(e.target.value)
+//             console.log(e.target.value)
+//             }} // Update the 'vesselOwner' state with the selected value (customer ID)
+//           >
+//             {Array.isArray(customers) && customers.length === 0 ? (
+//               <MenuItem value="">No customers available</MenuItem>
+//             ) : (
+//               customers.map((customer) => (
+//                 <MenuItem key={customer._id} value={customer._id}>
+//                   {customer.customerName}
+//                 </MenuItem>
+//               ))
+//             )}
+//           </TextField>
+//             &nbsp;
+//           </DialogContent>
+//           <DialogActions>
+//             <Button onClick={handleModalClose}>Cancel</Button>
+//             <Button
+//               sx={{ backgroundColor: "#11047A" }}
+//               variant="contained"
+//               color="primary"
+//               onClick={handleAddVessel}
+//             >
+//               Add Vessel
+//             </Button>
+//           </DialogActions>
+//         </Dialog>
+
+//         {isLoading && <CircularProgress color="primary" />}
+
+//       </Container>
+//     </ThemeProvider>
+//   );
+// };
+
+// export default Vessel;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -222,7 +636,8 @@ import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import SearchBar from "../customers/SearchBar";
 import { CircularProgress } from "@mui/material";
-
+import { format } from "date-fns";
+import { enGB } from "date-fns/locale";
 
 
 const Vessel = () => {
@@ -283,7 +698,7 @@ const Vessel = () => {
   const [vessels, setVessels] = React.useState([]);
 
   const fetchVessels = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     // Replace BASE_URL with your actual API base URL
     // const BASE_URL = "https://api.example.com";
     // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
@@ -302,7 +717,7 @@ const Vessel = () => {
     } catch (error) {
       console.error("Error fetching vessels:", error);
       setVessels([]);
-    }finally {
+    } finally {
       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
     }
   };
@@ -312,7 +727,7 @@ const Vessel = () => {
   }, []);
 
   const handleDeleteVessel = async (vesselId) => {
-    setIsLoading(true)
+    setIsLoading(true);
     // Replace BASE_URL with your actual API base URL
     // const BASE_URL = "https://api.example.com";
     // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
@@ -336,13 +751,13 @@ const Vessel = () => {
       );
     } catch (error) {
       console.error("Error deleting vessel:", error);
-    }finally {
+    } finally {
       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
     }
   };
 
   const handleDisableVessel = async (vesselId) => {
-    setIsLoading(true)
+    setIsLoading(true);
     // Replace BASE_URL with your actual API base URL
     // const BASE_URL = "https://api.example.com";
     // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
@@ -368,16 +783,13 @@ const Vessel = () => {
       );
     } catch (error) {
       console.error("Error disabling vessel:", error);
-    }finally {
+    } finally {
       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
     }
   };
 
   const handleEnableVessel = async (vesselId) => {
-    setIsLoading(true)
-    // Replace BASE_URL with your actual API base URL
-    // const BASE_URL = "https://api.example.com";
-    // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+    setIsLoading(true);
 
     const headers = {
       "Content-Type": "application/json",
@@ -400,21 +812,19 @@ const Vessel = () => {
       );
     } catch (error) {
       console.error("Error enabling vessel:", error);
-    }finally {
+    } finally {
       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
     }
   };
 
-  
-
   const handleAddVessel = async () => {
     setIsLoading(true); // Set isLoading to true before making the API call
-  
+
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${API_KEY}`,
     };
-  
+
     try {
       // Prepare the data to send in the request body
       const vesselData = {
@@ -423,23 +833,23 @@ const Vessel = () => {
         vesselType,
         vesselOwner, // Make sure 'vesselOwner' contains the selected customer ID, not the name
       };
-  
+
       // Make the API call to create a new vessel
       const response = await axios.post(
         `${BASE_URL}/vessel/create-vessel`,
         vesselData,
         { headers }
       );
-  
+
       // Handle the API response (e.g., show success message)
       console.log("New vessel added:", response.data);
-  
+
       // Clear the form fields after successful submission
       setVesselName("");
       setRegistrationNumber("");
       setVesselType("");
       setVesselOwner(""); // Clear the selected customer ID
-  
+
       fetchVessels();
       handleModalClose();
     } catch (error) {
@@ -448,7 +858,6 @@ const Vessel = () => {
       setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
     }
   };
-  
 
   const theme = createTheme();
   return (
@@ -473,60 +882,63 @@ const Vessel = () => {
         </Box>
         <br />
         <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Vessel Name</TableCell>
+              <TableCell>Registration Number</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Owner Name</TableCell>
+              <TableCell>Created At</TableCell>
+              <TableCell>Enable</TableCell>
+              <TableCell>Disable</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {vessels.length === 0 ? (
               <TableRow>
-                <TableCell>Vessel Name</TableCell>
-                <TableCell>Registration Number</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Owner Name</TableCell>
-                <TableCell>Created At</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell colSpan={6}>No Vessels found.</TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {vessels.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6}>No Vessels found.</TableCell>
-                </TableRow>
-              ) : (
-                vessels.map((vessel) => (
-                  <TableRow key={vessel._id}>
-                    <TableCell>
-                      <Link to={`/admin/vessel-detail/${vessel._id}`}>
-                        {vessel.vesselName}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{vessel.registrationNumber}</TableCell>
-                    <TableCell>{vessel.vesselType}</TableCell>
-                    <TableCell>{vessel.ownerInfo.customerName}</TableCell>
-                    <TableCell>{vessel.ownerInfo.created_at}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => handleDeleteVessel(vessel._id)}
-                      >
-                        <Delete />
+            ) : (
+              vessels.map((vessel) => (
+                <TableRow key={vessel._id}>
+                  <TableCell>
+                    <Link to={`/admin/vessel-detail/${vessel._id}`}>
+                      {vessel.vesselName}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{vessel.registrationNumber}</TableCell>
+                  <TableCell>{vessel.vesselType}</TableCell>
+                  <TableCell>{vessel.ownerInfo.customerName}</TableCell>
+                  <TableCell>
+                    {format(new Date(vessel.ownerInfo.created_at), "dd MMM yyyy", {
+                      locale: enGB
+                    })}
+                  </TableCell>
+                  <TableCell> {vessel.isBlocked ? "Yes" : "No" }</TableCell>
+                  <TableCell> {vessel.isBlocked ? "No" : "Yes" }</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => handleDeleteVessel(vessel._id)}>
+                      <Delete />
+                    </IconButton>
+                    {vessel.isBlocked ? (
+                      <IconButton onClick={() => handleEnableVessel(vessel._id)}>
+                        <CheckCircle />
                       </IconButton>
-                      {vessel.isBlocked ? (
-                        <IconButton
-                          onClick={() => handleEnableVessel(vessel._id)}
-                        >
-                          <CheckCircle />
-                        </IconButton>
-                      ) : (
-                        <IconButton
-                          onClick={() => handleDisableVessel(vessel._id)}
-                        >
-                          <Block />
-                        </IconButton>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                    ) : (
+                      <IconButton onClick={() => handleDisableVessel(vessel._id)}>
+                        <Block />
+                      </IconButton>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      
 
         <Dialog open={open} onClose={handleModalClose}>
           <DialogTitle>Add New Vessel</DialogTitle>
@@ -553,24 +965,25 @@ const Vessel = () => {
             />
             &nbsp;
             <TextField
-            select
-            label="Owner Name"
-            fullWidth
-            value={vesselOwner}
-            onChange={(e) => {setVesselOwner(e.target.value)
-            console.log(e.target.value)
-            }} // Update the 'vesselOwner' state with the selected value (customer ID)
-          >
-            {Array.isArray(customers) && customers.length === 0 ? (
-              <MenuItem value="">No customers available</MenuItem>
-            ) : (
-              customers.map((customer) => (
-                <MenuItem key={customer._id} value={customer._id}>
-                  {customer.customerName}
-                </MenuItem>
-              ))
-            )}
-          </TextField>
+              select
+              label="Owner Name"
+              fullWidth
+              value={vesselOwner}
+              onChange={(e) => {
+                setVesselOwner(e.target.value); // Update the 'vesselOwner' state with the selected value (customer ID)
+                console.log(e.target.value);
+              }}
+            >
+              {Array.isArray(customers) && customers.length === 0 ? (
+                <MenuItem value="">No customers available</MenuItem>
+              ) : (
+                customers.map((customer) => (
+                  <MenuItem key={customer._id} value={customer._id}>
+                    {customer.customerName}
+                  </MenuItem>
+                ))
+              )}
+            </TextField>
             &nbsp;
           </DialogContent>
           <DialogActions>
@@ -587,7 +1000,6 @@ const Vessel = () => {
         </Dialog>
 
         {isLoading && <CircularProgress color="primary" />}
-
       </Container>
     </ThemeProvider>
   );
