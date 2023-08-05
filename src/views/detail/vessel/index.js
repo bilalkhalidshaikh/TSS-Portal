@@ -498,6 +498,13 @@ import CustomRaftFormDialog from "components/modal/CustomAddRaft";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import DialogContentText from "@mui/material/DialogContentText";
+import { makeStyles } from '@mui/styles';
+
+
+
+
+
 
 const RootContainer = styled("div")(({ theme }) => ({
   padding: "20px",
@@ -572,6 +579,10 @@ const VesselDetail = (props) => {
   const [editedType, setEditedType] = React.useState("");
   const [editedNextService, setEditedNextService] = React.useState(null);
   const [isEditDialogVisible, setEditDialogVisible] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] =
+    React.useState(false);
+  const [raftToDeleteId, setRaftToDeleteId] = React.useState(null);
 
   const [showConfirmationDialog, setShowConfirmationDialog] =
     React.useState(false);
@@ -841,6 +852,33 @@ const VesselDetail = (props) => {
     }
   };
 
+  const handleDeleteConfirmationOpen = (raftId) => {
+    setRaftToDeleteId(raftId);
+    setDeleteConfirmationOpen(true);
+  };
+
+  const handleDeleteConfirmationClose = () => {
+    setRaftToDeleteId(null);
+    setDeleteConfirmationOpen(false);
+  };
+
+  const handleDeleteRaft = async (raftToDeleteId) => {
+    handleDeleteConfirmationClose(); // Close the confirmation dialog
+
+    try {
+      const deleteStatus = await deleteRaft(raftToDeleteId);
+
+      if (deleteStatus) {
+        console.log("Raft deleted successfully");
+        fetchVesselInfo();
+      } else {
+        console.log("Failed to delete raft");
+      }
+    } catch (error) {
+      console.error("Error deleting raft:", error);
+    }
+  };
+
   function ButtonAppBar() {
     const handleDeleteVessel = async () => {
       handleHideConfirmationDialog();
@@ -913,6 +951,10 @@ const VesselDetail = (props) => {
         setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
       }
     };
+
+    // onClick={() => deleteRaft(raft._id)}
+
+
 
     return (
       <>
@@ -987,6 +1029,27 @@ const VesselDetail = (props) => {
       </>
     );
   }
+
+
+  
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    position: 'absolute',
+    width: '80%',
+    maxWidth: 620,
+    backgroundColor: '#fff',
+    boxShadow: '3px 4px 5px 3px #ccc',
+    padding: '24px',
+    borderRadius: '2px',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    outline: 'none',
+  },
+}));
+
+const classes = useStyles();
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -1096,12 +1159,12 @@ const VesselDetail = (props) => {
                     <Add /> Add Rafts
                   </Button>
                   {/*  <CustomRaftFormDialog /> */}
-                  </Stack>
-                  </Toolbar>
-                  </AppBar>
-                  <br />
-                  <br />
-                
+                </Stack>
+              </Toolbar>
+            </AppBar>
+            <br />
+            <br />
+
             <Stack direction="row" spacing={2}>
               {raftsData.length === 0 ? (
                 <Typography variant="body1" color="text.secondary">
@@ -1151,9 +1214,39 @@ const VesselDetail = (props) => {
                       </Typography>
                     </CardContent>
                     <CardActions>
-                      <Button size="small" onClick={() => deleteRaft(raft._id)}>
+                      <Button
+                        size="small"
+                        onClick={() => handleDeleteConfirmationOpen(raft._id)}
+                      >
                         Delete
                       </Button>
+                      {/* Delete confirmation dialog */}
+                      <Dialog
+                        open={deleteConfirmationOpen}
+                        onClose={handleDeleteConfirmationClose}
+                      >
+                        <DialogTitle>Confirm Delete</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText>
+                            Are you sure you want to delete this raft?
+                          </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={handleDeleteConfirmationClose}
+                            color="primary"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteRaft(raft._id)}
+                            color="primary"
+                          >
+                            Delete
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+
                       <Button
                         size="small"
                         onClick={() => handleEditRaftModalOpen(raft)}
@@ -1171,6 +1264,7 @@ const VesselDetail = (props) => {
                         <DialogTitle>Edit Raft</DialogTitle>
                         <DialogContent>
                           {/* Raft Name */}
+                          &nbsp;
                           <TextField
                             label="Raft Name"
                             value={editedRaftName}
@@ -1198,6 +1292,7 @@ const VesselDetail = (props) => {
                             }
                             fullWidth
                           />
+                          &nbsp;
                           {/* Last Service */}
                           <TextField
                             label="Last Service"
@@ -1260,90 +1355,45 @@ const VesselDetail = (props) => {
             </Stack>
 
             {/* Dialog for adding a new raft */}
-            <Dialog open={open} onClose={handleClose} maxWidth="lg">
-              <DialogContent sx={{ display: "flex", justifyContent: "center" }}>
-                <Paper sx={{ p: 4, width: "100%", maxWidth: "480px" }}>
-                  <DialogTitle>Add New Raft</DialogTitle>
-                  <DialogContent>
-                    <form onSubmit={handleAddRaft}>
-                      <TextField
-                        label="Raft Name"
-                        name="raftName"
-                        required
-                        fullWidth
-                      />
-                      <br />
-                      &nbsp;
-                      <TextField
-                        label="Serial Number"
-                        name="serialNumber"
-                        type="number"
-                        required
-                        fullWidth
-                      />
-                      <br />
-                      &nbsp;
-                      <TextField
-                        label="Production Date"
-                        name="productionDate"
-                        type="date"
-                        required
-                        fullWidth
-                      />
-                      <br />
-                      &nbsp;
-                      <TextField
-                        label="Last Service"
-                        name="lastService"
-                        type="date"
-                        required
-                        fullWidth
-                      />
-                      <br />
-                      &nbsp;
-                      <TextField
-                        label="Size"
-                        name="size"
-                        type="number"
-                        required
-                        fullWidth
-                      />
-                      <br />
-                      &nbsp;
-                      <TextField
-                        label="Type"
-                        name="type"
-                        required
-                        fullWidth
-                      />
-                      <br />
-                      &nbsp;
-                      <TextField
-                        label="Next Service"
-                        name="nextService"
-                        type="date"
-                        required
-                        fullWidth
-                      />
-                      <br />
-                      &nbsp;
-                      <Stack direction="row" justifyContent="flex-end">
-                        <Button type="submit" color="primary">
-                          Add Raft
-                        </Button>
-                        <Button onClick={handleClose} color="secondary">
-                          Cancel
-                        </Button>
-                      </Stack>
-                    </form>
-                  </DialogContent>
-                </Paper>
-              </DialogContent>
-            </Dialog>
+          
 
-            
+            <Modal open={open} onClose={handleClose}>
+      <Paper className={classes.paper}>
+      <DialogTitle>Add Raft</DialogTitle>
 
-            
+        <form onSubmit={handleAddRaft}>
+          <TextField label="Raft Name" name="raftName" required fullWidth />
+          <br />
+          &nbsp;
+          <TextField label="Serial Number" name="serialNumber" type="number" required fullWidth />
+          <br />
+          &nbsp;
+          <TextField  name="productionDate" type="date" required fullWidth />
+          <br />
+          &nbsp;
+          <TextField  name="lastService" type="date" required fullWidth />
+          <br />
+          &nbsp;
+          <TextField label="Size" name="size" type="number" required fullWidth />
+          <br />
+          &nbsp;
+          <TextField label="Type" name="type" required fullWidth />
+          <br />
+          &nbsp;
+          <TextField  name="nextService" type="date" required fullWidth />
+          <br />
+          &nbsp;
+          <Stack direction="row" justifyContent="flex-end">
+            <Button type="submit" color="primary">
+              Add Raft
+            </Button>
+            <Button onClick={handleClose} color="secondary">
+              Cancel
+            </Button>
+          </Stack>
+        </form>
+      </Paper>
+    </Modal>
           </Box>
 
           <br />
@@ -1457,5 +1507,87 @@ const VesselDetail = (props) => {
     </ThemeProvider>
   );
 };
+
+
+
+
+
+
+
+// <Dialog open={open} onClose={handleClose} maxWidth="lg">
+// <DialogContent sx={{ display: "flex", justifyContent: "center" }}>
+//   <Paper sx={{ p: 4, width: "100%", maxWidth: "480px" }}>
+//     <DialogTitle>Add New Raft</DialogTitle>
+//     <DialogContent>
+//       <form onSubmit={handleAddRaft}>
+//         <TextField
+//           label="Raft Name"
+//           name="raftName"
+//           required
+//           fullWidth
+//         />
+//         <br />
+//         &nbsp;
+//         <TextField
+//           label="Serial Number"
+//           name="serialNumber"
+//           type="number"
+//           required
+//           fullWidth
+//         />
+//         <br />
+//         &nbsp;
+//         <TextField
+//           label="Production Date"
+//           name="productionDate"
+//           type="date"
+//           required
+//           fullWidth
+//         />
+//         <br />
+//         &nbsp;
+//         <TextField
+//           label="Last Service"
+//           name="lastService"
+//           type="date"
+//           required
+//           fullWidth
+//         />
+//         <br />
+//         &nbsp;
+//         <TextField
+//           label="Size"
+//           name="size"
+//           type="number"
+//           required
+//           fullWidth
+//         />
+//         <br />
+//         &nbsp;
+//         <TextField label="Type" name="type" required fullWidth />
+//         <br />
+//         &nbsp;
+//         <TextField
+//           label="Next Service"
+//           name="nextService"
+//           type="date"
+//           required
+//           fullWidth
+//         />
+//         <br />
+//         &nbsp;
+//         <Stack direction="row" justifyContent="flex-end">
+//           <Button type="submit" color="primary">
+//             Add Raft
+//           </Button>
+//           <Button onClick={handleClose} color="secondary">
+//             Cancel
+//           </Button>
+//         </Stack>
+//       </form>
+//     </DialogContent>
+//   </Paper>
+// </DialogContent>
+// </Dialog>
 
 export default VesselDetail;
