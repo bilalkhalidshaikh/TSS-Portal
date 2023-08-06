@@ -775,12 +775,14 @@ const Vessel = () => {
           headers,
         }
       );
+      fetchVessels()
       // Update the isBlocked property of the vessel in the state
-      setVessels((prevVessels) =>
-        prevVessels.map((vessel) =>
-          vessel._id === vesselId ? { ...vessel, isBlocked: true } : vessel
-        )
-      );
+
+      // setVessels((prevVessels) =>
+      //   prevVessels.map((vessel) =>
+      //     vessel._id === vesselId ? { ...vessel, isBlocked: true } : vessel
+      //   )
+      // );
     } catch (error) {
       console.error("Error disabling vessel:", error);
     } finally {
@@ -804,12 +806,15 @@ const Vessel = () => {
           headers,
         }
       );
+        fetchVessels()
+
       // Update the isBlocked property of the vessel in the state
-      setVessels((prevVessels) =>
-        prevVessels.map((vessel) =>
-          vessel._id === vesselId ? { ...vessel, isBlocked: false } : vessel
-        )
-      );
+
+      // setVessels((prevVessels) =>
+      //   prevVessels.map((vessel) =>
+      //     vessel._id === vesselId ? { ...vessel, isBlocked: false } : vessel
+      //   )
+      // );
     } catch (error) {
       console.error("Error enabling vessel:", error);
     } finally {
@@ -915,12 +920,12 @@ const Vessel = () => {
                       locale: enGB
                     })}
                   </TableCell>
-                  <TableCell> {vessel.isBlocked ? "No" : "Yes" }</TableCell>
+                  <TableCell> {vessel.is_disabled ? "No" : "Yes" }</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleDeleteVessel(vessel._id)}>
                       <Delete />
                     </IconButton>
-                    {vessel.isBlocked ? (
+                    {vessel.is_disabled ? (
                       <IconButton onClick={() => handleEnableVessel(vessel._id)}>
                         <CheckCircle />
                       </IconButton>

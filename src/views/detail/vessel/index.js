@@ -454,7 +454,7 @@
 
 // export default VesselDetail;
 
-import React, { useEffect } from "react";
+import React, { useEffect ,useState} from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   Typography,
@@ -482,7 +482,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import KayakingIcon from "@mui/icons-material/Kayaking";
-import { Block, Delete, Add, MoreVert } from "@mui/icons-material";
+import { Block, Delete, Add, MoreVert,Edit } from "@mui/icons-material";
 import { MdShop } from "react-icons/md";
 import SailingIcon from "@mui/icons-material/Sailing";
 import AppBar from "@mui/material/AppBar";
@@ -499,12 +499,7 @@ import { withRouter } from "react-router-dom";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import DialogContentText from "@mui/material/DialogContentText";
-import { makeStyles } from '@mui/styles';
-
-
-
-
-
+import { makeStyles } from "@mui/styles";
 
 const RootContainer = styled("div")(({ theme }) => ({
   padding: "20px",
@@ -920,41 +915,105 @@ const VesselDetail = (props) => {
       setShowConfirmationDialog(false);
     };
 
-    const handleDisableVessel = async () => {
-      setIsLoading(true);
-      // Replace BASE_URL with your actual API base URL
-      // const BASE_URL = "https://api.example.com";
-      // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+    const ConfirmationDialog = ({ isOpen, onCancel, onConfirm }) => {
+      if (!isOpen) return null;
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
+      const style = {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 400,
+        backgroundColor: "#fff",
+        boxShadow: 24,
+        p: 4,
+        borderRadius: 4,
       };
 
-      try {
-        await axios.post(
-          `${BASE_URL}/vessel/disable-vessel`,
-          { vesselId },
-          {
-            headers,
-          }
-        );
-        // Update the isBlocked property of the vessel in the state
-        setVessels((prevVessels) =>
-          prevVessels.map((vessel) =>
-            vessel._id === vesselId ? { ...vessel, isBlocked: true } : vessel
-          )
-        );
-      } catch (error) {
-        console.error("Error disabling vessel:", error);
-      } finally {
-        setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
-      }
+      return (
+        <Modal
+          open={isOpen}
+          onClose={onCancel}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Confirm Disable
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              Are you sure you want to disable this vessel? This action will
+              lead to disable vessel.
+            </Typography>
+            <div className="confirmation-buttons">
+              <Button onClick={onConfirm}>Yes, Disable</Button>
+              <Button onClick={onCancel}>Cancel</Button>
+            </div>
+          </Box>
+        </Modal>
+      );
     };
 
+    const [showDisableConfirmationDialog, setShowDisableConfirmationDialog] =
+      React.useState(false);
+    const [selectedVesselId, setSelectedVesselId] = React.useState(null);
+
+    const handleShowDisableConfirmationDialog = (vesselId) => {
+      setSelectedVesselId(vesselId);
+      setShowDisableConfirmationDialog(true);
+    };
+
+    const handleHideDisableConfirmationDialog = () => {
+      setSelectedVesselId(null); // Reset selectedVesselId when hiding the confirmation dialog
+      setShowDisableConfirmationDialog(false);
+    };
+    const handleDisableVessel = async () => {
+      handleHideDisableConfirmationDialog();
+
+      if (selectedVesselId) {
+        // Check if selectedVesselId is not null or undefined
+        setIsLoading(true);
+
+        // Replace BASE_URL with your actual API base URL
+        // const BASE_URL = "https://api.example.com";
+        // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
+
+        try {
+          const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${API_KEY}`,
+          };
+          // Display the confirmation dialog before disabling the vessel
+          // const userConfirmed = window.confirm(
+          //   "Are you sure you want to disable this vessel? This action will disable this vessel."
+          // );
+
+          // if (userConfirmed) {
+          await axios.post(
+            `${BASE_URL}/vessel/disable-vessel`,
+            { vesselId },
+            {
+              headers,
+            }
+          );
+
+          fetchVesselInfo();
+          // Update the isBlocked property of the vessel in the state
+          // setVessels((prevVessels) =>
+          //   prevVessels.map((vessel) =>
+          //     vessel._id === vesselId ? { ...vessel, isBlocked: true } : vessel
+          //   )
+          // );
+        } catch (error) {
+          console.error("Error disabling vessel:", error);
+        } finally {
+          setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
+        }
+      }
+    };
+    // };
+
     // onClick={() => deleteRaft(raft._id)}
-
-
 
     return (
       <>
@@ -985,14 +1044,33 @@ const VesselDetail = (props) => {
                   ))}
               </Typography>
               <Stack direction="row" spacing={2}>
-                <Button
-                  color="inherit"
-                  variant="outlined"
-                  onClick={handleDisableVessel}
-                >
-                  Disable
-                </Button>
+                {Array.isArray(vesselData) &&
+                  vesselData.map((vessel) => (
+                    <React.Fragment key={vessel._id}>
+                      {vessel.is_disabled === false ? (
+                        <Button
+                          color="inherit"
+                          variant="outlined"
+                          disabled={false} // Show the button when the vessel is disabled
+                          onClick={() =>
+                            handleShowDisableConfirmationDialog(vessel._id)
+                          }
+                        >
+                          Disable
+                        </Button>
+                      ) : (
+                        <></>
+                      )}
+                    </React.Fragment>
+                  ))}
 
+                <ConfirmationDialog
+                  isOpen={
+                    showDisableConfirmationDialog && selectedVesselId !== null
+                  }
+                  onCancel={handleHideDisableConfirmationDialog}
+                  onConfirm={handleDisableVessel}
+                />
                 <Button
                   color="inherit"
                   variant="outlined"
@@ -1030,30 +1108,320 @@ const VesselDetail = (props) => {
     );
   }
 
+  const useStyles = makeStyles((theme) => ({
+    paper: {
+      position: "absolute",
+      width: "80%",
+      maxWidth: 580,
+      backgroundColor: "#fff",
+      boxShadow: "none",
+      padding: "24px",
+      paddingTop: "5px",
+      borderRadius: "10px",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      outline: "none",
+      maxHeight: "88%",
+      overflowY: "scroll",
+      overflowX: "none",
+    },
+  }));
+
+  const classes = useStyles();
+
+
+  const [equipmentData, setEquipmentData] = useState([]); // Store equipment data fetched from the API
+  const [editingEquipmentId, setEditingEquipmentId] = useState(null); // Store the ID of the equipment being edited
+  const [formValues, setFormValues] = useState({
+    equipmentId: "",
+    vesselId: "",
+    expiryDate: "",
+    certificate: "",
+  });
 
   
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    position: 'absolute',
-    width: '80%',
-    maxWidth: 620,
-    backgroundColor: '#fff',
-    boxShadow: '3px 4px 5px 3px #ccc',
-    padding: '24px',
-    borderRadius: '2px',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    outline: 'none',
-  },
-}));
+  const fetchEquipmentData = async () => {
+    const headers = {'Authorization': 'Bearer 340304930490d9f0df90df90df9d0f9d0f'}
+    setLoading(true)
+    if (vesselId !== null) {
+    try {
+      const response = await axios.get(
+      `${BASE_URL}/vessel/get-vessel-equipments-admin/${vesselId&&vesselId}`,
+      {headers}
+      );
+      // const equipmentapi = response.data.data
+      console.log('...',response.data.data)
+      setEquipmentData(response.data.data);
 
-const classes = useStyles();
+    } catch (error) {
+      console.error("Error fetching equipment data:", error);
+    }finally{
+      setLoading(false)
+    }
+  }
+  };
+  useEffect(() => {
+    if (vesselId !== null) {
 
+    fetchEquipmentData();
+    }
+  }, [vesselId]);
+
+  
+
+  const [showEqConfirmationDialog, setShowEqConfirmationDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState(null);
+
+ 
+  const handleDeleteEquipment = async (equipmentId) => {
+    try {
+      setIsLoading(true);
+      await axios.post(
+        `${BASE_URL}/vessel/delete-vessel-equipment`,
+        {
+          vesselEquipmentId: equipmentId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        }
+      );
+
+      // Remove the deleted equipment from the equipmentData state
+      setEquipmentData((prevEquipmentData) =>
+        prevEquipmentData.filter((equipment) => equipment._id !== equipmentId)
+      );
+    } catch (error) {
+      console.error("Error deleting equipment:", error);
+    } finally {
+      setIsLoading(false);
+      setShowEqConfirmationDialog(false);
+    }
+  };
+
+  const handleEditEquipment = (equipmentId) => {
+    setShowEditDialog(true);
+    setSelectedEquipmentId(equipmentId);
+  };
+
+  const handleEdit = async (equipmentId, formData) => {
+    try {
+      setIsLoading(true);
+      await axios.post(
+        `${BASE_URL}/vessel/edit-vessel-equipment`,
+        {
+          id: equipmentId,
+          certificate: formData.certificate,
+          expiry_date: formData.expiryDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        }
+      );
+
+      // Update the equipment data with the edited values
+      setEquipmentData((prevEquipmentData) =>
+        prevEquipmentData.map((equipment) =>
+          equipment._id === equipmentId
+            ? { ...equipment, ...formData }
+            : equipment
+        )
+      );
+      fetchEquipmentData()
+    } catch (error) {
+      console.error("Error editing equipment:", error);
+    } finally {
+      setIsLoading(false);
+      setShowEditDialog(false);
+    }
+  };
+
+
+  
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      // Perform the API call to add a new equipment
+      await axios.post(
+        "BASE_URL/vessel/add-vessel-equipment",
+        {
+          equipment_id: formValues.equipmentId,
+          vesselId: formValues.vesselId,
+          expiry_date: formValues.expiryDate,
+          certificate: formValues.certificate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        }
+      );
+  
+      // Fetch the updated equipment data after adding the new equipment
+      const response = await axios.get(
+        `https://api.raft-service.com/vessel/get-vessel-equipments-admin/${vesselId}`
+      );
+      setEquipmentData(response.data);
+    } catch (error) {
+      console.error("Error adding equipment:", error);
+    } finally {
+      setIsLoading(false);
+      handleClose();
+    }
+  };
+  
+
+
+  const ConfirmationEqDialog = ({ isOpen, onCancel, onConfirm }) => {
+    if (!isOpen) return null;
+  
+    return (
+      <Dialog open={isOpen} onClose={onCancel}>
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>
+          <p>Are you sure you want to delete this equipment?</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={onConfirm} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
+
+  const EditEquipmentDialog = ({
+    isOpen,
+    equipmentData,
+    selectedEquipmentId,
+    onCancel,
+    onEdit,
+  }) => {
+    const [formValues, setFormValues] = useState({
+      equipmentId: "",
+      expiryDate: "",
+      certificate: "",
+    });
+  
+    useEffect(() => {
+      // Find the selected equipment using its ID and set form values with the existing data
+      if (selectedEquipmentId) {
+        const selectedEquipment = equipmentData.find(
+          (equipment) => equipment._id === selectedEquipmentId
+        );
+  
+        setFormValues({
+          equipmentId: selectedEquipment.equipment_id,
+          expiryDate: selectedEquipment.expiry_date,
+          certificate: selectedEquipment.certificate,
+        });
+      }
+    }, [selectedEquipmentId, equipmentData]);
+  
+    const handleInputChange = (event) => {
+      const { name, value } = event.target;
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
+    };
+  
+    const handleEdit = async () => {
+      try {
+        // Perform the API call to edit the equipment
+        await axios.post(
+          `${BASE_URL}/vessel/edit-vessel-equipment`,
+          {
+            id: selectedEquipmentId,
+            certificate: formValues.certificate,
+            expiry_date: formValues.expiryDate,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${API_KEY}`,
+            },
+          }
+        );
+  
+        // Inform the parent component about the edit
+        onEdit(selectedEquipmentId, formValues);
+  
+        onCancel();
+      } catch (error) {
+        console.error("Error editing equipment:", error);
+      }
+    };
+  
+    return (
+      <Dialog open={isOpen} onClose={onCancel}>
+        <DialogTitle>Edit Equipment</DialogTitle>
+        <DialogContent>
+          <TextField
+            name="equipmentId"
+            label="Equipment ID"
+            fullWidth
+            value={formValues.equipmentId}
+            disabled
+          />
+          &nbsp;
+          <TextField
+            name="expiryDate"
+            label="Expiry Date"
+            type="date"
+            fullWidth
+            value={formValues.expiryDate}
+            onChange={handleInputChange}
+          />
+          &nbsp;
+          <TextField
+            name="certificate"
+            label="Certificate"
+            fullWidth
+            value={formValues.certificate}
+            onChange={handleInputChange}
+          />
+          &nbsp;
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button variant="contained" color="primary" onClick={handleEdit}>
+            Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+  
 
   return (
     <ThemeProvider theme={theme}>
       <RootContainer>
+        {isLoading && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              zIndex: 9999,
+            }}
+          >
+            <CircularProgress color="primary" />
+          </div>
+        )}
+
         <br />
         <br />
         <br />
@@ -1355,45 +1723,76 @@ const classes = useStyles();
             </Stack>
 
             {/* Dialog for adding a new raft */}
-          
 
             <Modal open={open} onClose={handleClose}>
-      <Paper className={classes.paper}>
-      <DialogTitle>Add Raft</DialogTitle>
+              <Paper className={classes.paper}>
+                <DialogTitle sx={{ marginLeft: "-10px" }}>Add Raft</DialogTitle>
 
-        <form onSubmit={handleAddRaft}>
-          <TextField label="Raft Name" name="raftName" required fullWidth />
-          <br />
-          &nbsp;
-          <TextField label="Serial Number" name="serialNumber" type="number" required fullWidth />
-          <br />
-          &nbsp;
-          <TextField  name="productionDate" type="date" required fullWidth />
-          <br />
-          &nbsp;
-          <TextField  name="lastService" type="date" required fullWidth />
-          <br />
-          &nbsp;
-          <TextField label="Size" name="size" type="number" required fullWidth />
-          <br />
-          &nbsp;
-          <TextField label="Type" name="type" required fullWidth />
-          <br />
-          &nbsp;
-          <TextField  name="nextService" type="date" required fullWidth />
-          <br />
-          &nbsp;
-          <Stack direction="row" justifyContent="flex-end">
-            <Button type="submit" color="primary">
-              Add Raft
-            </Button>
-            <Button onClick={handleClose} color="secondary">
-              Cancel
-            </Button>
-          </Stack>
-        </form>
-      </Paper>
-    </Modal>
+                <form onSubmit={handleAddRaft}>
+                  <TextField
+                    label="Raft Name"
+                    name="raftName"
+                    required
+                    fullWidth
+                  />
+                  <br />
+                  &nbsp;
+                  <TextField
+                    label="Serial Number"
+                    name="serialNumber"
+                    type="number"
+                    required
+                    fullWidth
+                  />
+                  <br />
+                  &nbsp;
+                  <TextField
+                    name="productionDate"
+                    type="date"
+                    required
+                    fullWidth
+                  />
+                  <br />
+                  &nbsp;
+                  <TextField
+                    name="lastService"
+                    type="date"
+                    required
+                    fullWidth
+                  />
+                  <br />
+                  &nbsp;
+                  <TextField
+                    label="Size"
+                    name="size"
+                    type="number"
+                    required
+                    fullWidth
+                  />
+                  <br />
+                  &nbsp;
+                  <TextField label="Type" name="type" required fullWidth />
+                  <br />
+                  &nbsp;
+                  <TextField
+                    name="nextService"
+                    type="date"
+                    required
+                    fullWidth
+                  />
+                  <br />
+                  &nbsp;
+                  <Stack direction="row" justifyContent="flex-end">
+                    <Button type="submit" color="primary">
+                      Add Raft
+                    </Button>
+                    <Button onClick={handleClose} color="secondary">
+                      Cancel
+                    </Button>
+                  </Stack>
+                </form>
+              </Paper>
+            </Modal>
           </Box>
 
           <br />
@@ -1417,7 +1816,7 @@ const classes = useStyles();
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                   Equipments
                 </Typography>
-                <CustomFormDialog />
+                <CustomFormDialog vesselId={vesselId&&vesselId} />
                 {/* <Button color="inherit" ><Add />Add Equipments</Button> */}
               </Toolbar>
             </AppBar>
@@ -1432,87 +1831,113 @@ const classes = useStyles();
                     <TableCell>Unit Price</TableCell>
                     <TableCell>Total Units</TableCell>
                     <TableCell>Expiry Date</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>Dummy Name</TableCell>
-                    <TableCell>Dummy Mva</TableCell>
-                    <TableCell>Dummy Price</TableCell>
-                    <TableCell>Dummy Unit</TableCell>
-                    <TableCell>Dummy Date</TableCell>
+                {equipmentData.map((equipment) => (
+                  <TableRow key={equipment._id}>
+                    <TableCell>{equipment.equipment.eq_name}</TableCell>
+                    <TableCell>{equipment.equipment.mva}</TableCell>
+                    <TableCell>{equipment.equipment.unitPrice}</TableCell>
+                    <TableCell>{equipment.equipment.unitPrice}</TableCell>
+                    <TableCell>{equipment.expiry_date}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEditEquipment(equipment._id)}
+                        >
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                      color="secondary"
+                      onClick={() => setShowEqConfirmationDialog(true)}
+                   
+                      >
+                        <Delete />
+                      </IconButton>
+                      <ConfirmationEqDialog
+                      isOpen={showEqConfirmationDialog}
+                      onCancel={() => setShowEqConfirmationDialog(false)}
+                      onConfirm={() => handleDeleteEquipment(equipment._id)}
+                    />
+              
+                    <EditEquipmentDialog
+                      isOpen={showEditDialog}
+                      equipmentData={equipmentData}
+                      selectedEquipmentId={selectedEquipmentId}
+                      onCancel={() => setShowEditDialog(false)}
+                      onEdit={handleEdit}
+                    />
+                    </TableCell>
                   </TableRow>
+                ))}
                 </TableBody>
               </Table>
             </TableContainerStyled>
           </Box>
 
-          {/* <div>
-          <Typography variant="subtitle1">Equipments</Typography>
-          <IconButton onClick={handleOpen} color="primary">
-            <Add />
-          </IconButton>
-          <div>
-            <Typography variant="body1">Dummy Equipment 1</Typography>
-            <Typography variant="body1">Dummy Equipment 2</Typography>
-          </div>
-        </div>
-
-        <TableContainerStyled component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Equipment Name</TableCell>
-                <TableCell>MVP</TableCell>
-                <TableCell>Unit Price</TableCell>
-                <TableCell>Total Units</TableCell>
-                <TableCell>Expiry Date</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>Dummy Equipment Name</TableCell>
-                <TableCell>Dummy MVP</TableCell>
-                <TableCell>Dummy Unit Price</TableCell>
-                <TableCell>Dummy Total Units</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainerStyled> */}
-          {/* <Equipments/  > */}
-          {/* <Dialog open={equipopen} onClose={handleEquipModalClose}>
-            <DialogTitle>Add New Equipments</DialogTitle>
-            <DialogContent>
-              <TextField label="Equipments Name" fullWidth />
-              <TextField label="Mva" type="number" fullWidth />
-              <TextField label="Unit Price" type="number" fullWidth />
-              <TextField label="Expiry Date" type="number" fullWidth />
-           
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleEquipModalClose}>Cancel</Button>
-              <Button
-                sx={{ backgroundColor: "#11047A" }}
-                variant="contained"
-                color="primary"
-                onClick={handleAddEquipments}
-              >
-                Add Equipments
-              </Button>
-            </DialogActions>
-          </Dialog> */}
-        </Container>
-        {isLoading && <CircularProgress color="primary" />}
-      </RootContainer>
+          </Container>
+          </RootContainer>
     </ThemeProvider>
   );
 };
 
+// {isLoading && <CircularProgress color="primary" />}
+{/* <div>
+<Typography variant="subtitle1">Equipments</Typography>
+<IconButton onClick={handleOpen} color="primary">
+  <Add />
+</IconButton>
+<div>
+  <Typography variant="body1">Dummy Equipment 1</Typography>
+  <Typography variant="body1">Dummy Equipment 2</Typography>
+</div>
+</div>
 
-
-
-
-
+<TableContainerStyled component={Paper}>
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableCell>Equipment Name</TableCell>
+      <TableCell>MVP</TableCell>
+      <TableCell>Unit Price</TableCell>
+      <TableCell>Total Units</TableCell>
+      <TableCell>Expiry Date</TableCell>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow>
+      <TableCell>Dummy Equipment Name</TableCell>
+      <TableCell>Dummy MVP</TableCell>
+      <TableCell>Dummy Unit Price</TableCell>
+      <TableCell>Dummy Total Units</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+</TableContainerStyled> */}
+{/* <Equipments/  > */}
+{/* <Dialog open={equipopen} onClose={handleEquipModalClose}>
+  <DialogTitle>Add New Equipments</DialogTitle>
+  <DialogContent>
+    <TextField label="Equipments Name" fullWidth />
+    <TextField label="Mva" type="number" fullWidth />
+    <TextField label="Unit Price" type="number" fullWidth />
+    <TextField label="Expiry Date" type="number" fullWidth />
+ 
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleEquipModalClose}>Cancel</Button>
+    <Button
+      sx={{ backgroundColor: "#11047A" }}
+      variant="contained"
+      color="primary"
+      onClick={handleAddEquipments}
+    >
+      Add Equipments
+    </Button>
+  </DialogActions>
+</Dialog> */}
 
 // <Dialog open={open} onClose={handleClose} maxWidth="lg">
 // <DialogContent sx={{ display: "flex", justifyContent: "center" }}>

@@ -24,6 +24,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "add": "^2.0.6",
     "apexcharts": "3.35.2",
     "axios": "^1.4.0",
     "babel-cli": "^6.26.0",
@@ -47,7 +48,8 @@
     "styled-components": "^6.0.2",
     "stylis": "^4.1.1",
     "stylis-plugin-rtl": "2.0.2",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "yarn": "^1.22.19"
   },
   "scripts": {
     "start": "react-scripts start",
