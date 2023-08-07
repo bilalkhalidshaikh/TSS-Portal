@@ -20,7 +20,7 @@ import {
   useDisclosure,
   SimpleGrid,
 } from "@chakra-ui/react";
-
+import logo from "../../assets/logo.jpg";
 // Custom components
 import IconBox from "components/icons/IconBox";
 import { HorizonLogo } from "components/icons/Icons";
@@ -102,11 +102,13 @@ export default function AuthNavbar(props) {
       color={mainText}>
       <Stack direction='row' spacing='12px' align='center' justify='center'>
         {/* <HorizonLogo h='26px' w='175px' color={logoColor} /> */}
-        TSS Portal
+        <img src={logo} width={50} height={50} alt="logo" />
+
       </Stack>
       <Text fontsize='sm' mt='3px'>
         {/* {logoText} */}
-        TSS Portal
+        <img src={logo} width={50} height={50} alt="logo" />
+
       </Text>
     </Link>
   );
@@ -123,7 +125,7 @@ export default function AuthNavbar(props) {
         alignItems='center'
         color={mainText}>
         {/* <HorizonLogo h='26px' w='175px' my='32px' color={logoColor} /> */}
-        TSS Portal
+       <img src={logo} width={50} height={50} alt="logo" />
       </Link>
     );
     // mainText = useColorModeValue("gray.700", "gray.200");
