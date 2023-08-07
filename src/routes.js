@@ -21,6 +21,7 @@ import Vessel from "views/admin/vessel"
 import VesselDetail from "views/detail/vessel"
 import Equipments from "views/admin/equipments"
 import Profile from "views/admin/profile";
+import Rafts from "views/admin/rafts";
 import CustomersAndSupport from "views/admin/contactsupport";
 import DataTables from "views/admin/dataTables";
 import RTL from "views/admin/rtl";
@@ -75,7 +76,7 @@ const routes = [
     path: "/rafts",
     icon: <Icon as={MdViewKanban} width='20px' height='20px' color='inherit' />,
     // component: SignInCentered,
-    component: Profile,
+    component: Rafts,
   },
   {
     name: "Contact & Support",
