@@ -6,6 +6,7 @@ import { Flex, useColorModeValue } from "@chakra-ui/react";
 // Custom components
 import { HorizonLogo } from "components/icons/Icons";
 import { HSeparator } from "components/separator/Separator";
+import logo from "../../../assets/logo.jpg"
 
 export function SidebarBrand() {
   //   Chakra color mode
@@ -14,7 +15,7 @@ export function SidebarBrand() {
   return (
     <Flex align='center' direction='column'>
       {/* <HorizonLogo h='26px' w='175px' my='32px' color={logoColor} /> */}
-      TSS Portal
+     <img src={logo}  width={100} height={100} alt="logo" />
       <HSeparator mb='20px' />
     </Flex>
   );
