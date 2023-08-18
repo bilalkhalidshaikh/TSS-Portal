@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
-import SearchBar from "./../customers/SearchBar";
+import SearchBar from "../customers/SearchBar";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
@@ -112,7 +112,7 @@ function a11yProps(index) {
 
 
 
-const Rafts = () => {
+const ProductListing = () => {
   const [open, setOpen] = React.useState(false);
   const BASE_URL = "https://api.raft-service.com";
   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
@@ -286,8 +286,8 @@ const Rafts = () => {
           variant="fullWidth"
           aria-label="full width tabs example"
         >
-          <Tab label="Service Near" {...a11yProps(0)} />
-          <Tab label="Normal" {...a11yProps(1)} />
+          <Tab label="Pending" {...a11yProps(0)} />
+          <Tab label="Purchased" {...a11yProps(1)} />
         </Tabs>
       </AppBar>
       <SwipeableViews
@@ -412,4 +412,4 @@ const Rafts = () => {
   );
 };
 
-export default Rafts;
+export default ProductListing;

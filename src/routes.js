@@ -10,7 +10,9 @@ import {
   MdSpaceDashboard,
   MdShop,
   MdViewKanban,
-  MdContacts
+  MdContacts,
+  MdRedeem,
+  MdSwapVerticalCircle
 } from "react-icons/md";
 
 // Admin Imports
@@ -22,6 +24,11 @@ import VesselDetail from "views/detail/vessel"
 import Equipments from "views/admin/equipments"
 import Profile from "views/admin/profile";
 import Rafts from "views/admin/rafts";
+/* eslint-disable import/no-unresolved */
+import ProductListing from "views/admin/products";
+/* eslint-enable import/no-unresolved */
+
+import RequestedServices from "views/admin/requested";
 import CustomersAndSupport from "views/admin/contactsupport";
 import DataTables from "views/admin/dataTables";
 import RTL from "views/admin/rtl";
@@ -77,6 +84,26 @@ const routes = [
     icon: <Icon as={MdViewKanban} width='20px' height='20px' color='inherit' />,
     // component: SignInCentered,
     component: Rafts,
+  },
+  {
+    name: "Products listing",
+    // layout: "/auth",
+    layout: "/admin",
+    // path: "/sign-in",
+    path: "/product-listing",
+    icon: <Icon as={MdRedeem} width='20px' height='20px' color='inherit' />,
+    // component: SignInCentered,
+    component: ProductListing,
+  },
+  {
+    name: "Requested services",
+    // layout: "/auth",
+    layout: "/admin",
+    // path: "/sign-in",
+    path: "/requested-services",
+    icon: <Icon as={MdSwapVerticalCircle} width='20px' height='20px' color='inherit' />,
+    // component: SignInCentered,
+    component: RequestedServices,
   },
   {
     name: "Contact & Support",

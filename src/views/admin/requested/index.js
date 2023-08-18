@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
-import SearchBar from "./../customers/SearchBar";
+import SearchBar from "../customers/SearchBar";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
@@ -112,7 +112,7 @@ function a11yProps(index) {
 
 
 
-const Rafts = () => {
+const RequestedServices = () => {
   const [open, setOpen] = React.useState(false);
   const BASE_URL = "https://api.raft-service.com";
   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
@@ -286,8 +286,9 @@ const Rafts = () => {
           variant="fullWidth"
           aria-label="full width tabs example"
         >
-          <Tab label="Service Near" {...a11yProps(0)} />
-          <Tab label="Normal" {...a11yProps(1)} />
+          <Tab label="Pending" {...a11yProps(0)} />
+          <Tab label="Approved" {...a11yProps(1)} />
+          <Tab label="Finished" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <SwipeableViews
@@ -323,6 +324,33 @@ const Rafts = () => {
       </TableContainer>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
+        <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Raft's Name</TableCell>
+              <TableCell>Serial Number</TableCell>
+              <TableCell>Size</TableCell>
+              <TableCell>Vessel Name</TableCell>
+              <TableCell>Type</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {equipments.map((equipment) => (
+              <TableRow key={equipment._id}>
+                <TableCell>{equipment.raftName}</TableCell>
+                <TableCell>{equipment.serialNumber}</TableCell>
+                <TableCell>{equipment.size}</TableCell>
+                <TableCell>{equipment.vessel.vesselName}</TableCell>
+                <TableCell>{equipment.type}</TableCell>
+
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+        </TabPanel>
+        <TabPanel value={value} index={2} dir={theme.direction}>
         <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -412,4 +440,4 @@ const Rafts = () => {
   );
 };
 
-export default Rafts;
+export default RequestedServices;

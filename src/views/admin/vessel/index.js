@@ -658,6 +658,9 @@ const Vessel = () => {
   const [vesselType, setVesselType] = useState("");
   const [vesselOwner, setVesselOwner] = useState("");
   const [customers, setCustomers] = useState([]);
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
 
   const BASE_URL = "https://api.raft-service.com";
   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
@@ -670,6 +673,28 @@ const Vessel = () => {
     console.log(searchTerm);
   };
 
+  // useEffect(() => {
+  //   const fetchCustomers = async () => {
+  //     const headers = {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${API_KEY}`,
+  //     };
+  //     try {
+  //       const response = await axios.get(
+  //         "https://api.raft-service.com/customers/get-all-customers",
+  //         { headers }
+  //       );
+  //       // Assuming the response data is an array of customers
+  //       setCustomers(response.data.data); // Set customers state with the 'data' property of the response
+  //       console.log(response.data.data); // Check the data in the console
+  //     } catch (error) {
+  //       console.error("Error fetching customers:", error);
+  //     }
+  //   };
+  //   fetchCustomers();
+
+
+  
   useEffect(() => {
     const fetchCustomers = async () => {
       const headers = {
@@ -681,15 +706,28 @@ const Vessel = () => {
           "https://api.raft-service.com/customers/get-all-customers",
           { headers }
         );
-        // Assuming the response data is an array of customers
-        setCustomers(response.data.data); // Set customers state with the 'data' property of the response
-        console.log(response.data.data); // Check the data in the console
+        setCustomers(response.data.data);
+        setFilteredCustomers(response.data.data); // Initialize filteredCustomers with all customers
+    
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
     };
     fetchCustomers();
   }, []);
+
+  const handleSearchChange = (event) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+  
+    // Filter customers based on the search query
+    const filtered = customers.filter((customer) =>
+      customer.customerName.toLowerCase().startsWith(query)
+    );
+  
+    setFilteredCustomers(filtered);
+  };
+
 
   useEffect(() => {
     console.log(customers);
@@ -967,26 +1005,39 @@ const Vessel = () => {
               onChange={(e) => setVesselType(e.target.value)}
             />
             &nbsp;
+           
+
+
+
             <TextField
-              select
-              label="Owner Name"
-              fullWidth
-              value={vesselOwner}
-              onChange={(e) => {
-                setVesselOwner(e.target.value); // Update the 'vesselOwner' state with the selected value (customer ID)
-                console.log(e.target.value);
-              }}
-            >
-              {Array.isArray(customers) && customers.length === 0 ? (
-                <MenuItem value="">No customers available</MenuItem>
-              ) : (
-                customers.map((customer) => (
-                  <MenuItem key={customer._id} value={customer._id}>
-                    {customer.customerName}
-                  </MenuItem>
-                ))
-              )}
-            </TextField>
+            select
+            label="Owner Name"
+            fullWidth
+            value={vesselOwner}
+            onChange={(e) => {
+              setVesselOwner(e.target.value);
+            }}
+            onInputChange={handleSearchChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          >
+            {Array.isArray(filteredCustomers) && filteredCustomers.length === 0 ? (
+              <MenuItem value="">No customers available</MenuItem>
+            ) : (
+              filteredCustomers.map((customer) => (
+                <MenuItem key={customer._id} value={customer._id}>
+                  {customer.customerName}
+                </MenuItem>
+              ))
+            )}
+          </TextField>
+          
+
+
+
+
+
             &nbsp;
           </DialogContent>
           <DialogActions>
@@ -1009,3 +1060,26 @@ const Vessel = () => {
 };
 
 export default Vessel;
+
+
+
+// <TextField
+// select
+// label="Owner Name"
+// fullWidth
+// value={vesselOwner}
+// onChange={(e) => {
+//   setVesselOwner(e.target.value); // Update the 'vesselOwner' state with the selected value (customer ID)
+//   console.log(e.target.value);
+// }}
+// >
+// {Array.isArray(customers) && customers.length === 0 ? (
+//   <MenuItem value="">No customers available</MenuItem>
+// ) : (
+//   customers.map((customer) => (
+//     <MenuItem key={customer._id} value={customer._id}>
+//       {customer.customerName}
+//     </MenuItem>
+//   ))
+// )}
+// </TextField>
