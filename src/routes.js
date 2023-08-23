@@ -12,16 +12,16 @@ import {
   MdViewKanban,
   MdContacts,
   MdRedeem,
-  MdSwapVerticalCircle
+  MdSwapVerticalCircle,
 } from "react-icons/md";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";
 import NFTMarketplace from "views/admin/marketplace";
-import Customers from "views/admin/customers"
-import Vessel from "views/admin/vessel"
-import VesselDetail from "views/detail/vessel"
-import Equipments from "views/admin/equipments"
+import Customers from "views/admin/customers";
+import Vessel from "views/admin/vessel";
+import VesselDetail from "views/detail/vessel";
+import Equipments from "views/admin/equipments";
 import Profile from "views/admin/profile";
 import Rafts from "views/admin/rafts";
 /* eslint-disable import/no-unresolved */
@@ -41,7 +41,7 @@ const routes = [
     name: "Main Dashboard",
     layout: "/admin",
     path: "/default",
-    icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: MainDashboard,
   },
   {
@@ -50,12 +50,7 @@ const routes = [
     // path: "/nft-marketplace",
     path: "/customers",
     icon: (
-      <Icon
-        as={MdSpaceDashboard}
-        width='20px'
-        height='20px'
-        color='inherit'
-      />
+      <Icon as={MdSpaceDashboard} width="20px" height="20px" color="inherit" />
     ),
     component: Customers,
     secondary: true,
@@ -63,7 +58,7 @@ const routes = [
   {
     name: "Vessel",
     layout: "/admin",
-    icon: <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
     path: "/vessel",
     component: Vessel,
   },
@@ -72,7 +67,7 @@ const routes = [
     layout: "/admin",
     // path: "/profile",
     path: "/equipments",
-    icon: <Icon as={MdShop} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdShop} width="20px" height="20px" color="inherit" />,
     component: Equipments,
   },
   {
@@ -81,17 +76,17 @@ const routes = [
     layout: "/admin",
     // path: "/sign-in",
     path: "/rafts",
-    icon: <Icon as={MdViewKanban} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdViewKanban} width="20px" height="20px" color="inherit" />,
     // component: SignInCentered,
     component: Rafts,
   },
   {
-    name: "Products listing",
+    name: "Equipment Purchases",
     // layout: "/auth",
     layout: "/admin",
     // path: "/sign-in",
-    path: "/product-listing",
-    icon: <Icon as={MdRedeem} width='20px' height='20px' color='inherit' />,
+    path: "/equipment-purchases",
+    icon: <Icon as={MdRedeem} width="20px" height="20px" color="inherit" />,
     // component: SignInCentered,
     component: ProductListing,
   },
@@ -101,7 +96,14 @@ const routes = [
     layout: "/admin",
     // path: "/sign-in",
     path: "/requested-services",
-    icon: <Icon as={MdSwapVerticalCircle} width='20px' height='20px' color='inherit' />,
+    icon: (
+      <Icon
+        as={MdSwapVerticalCircle}
+        width="20px"
+        height="20px"
+        color="inherit"
+      />
+    ),
     // component: SignInCentered,
     component: RequestedServices,
   },
@@ -111,7 +113,7 @@ const routes = [
     layout: "/admin",
     // path: "/rtl-default",
     path: "/contact-support",
-    icon: <Icon as={MdContacts} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdContacts} width="20px" height="20px" color="inherit" />,
     // component: RTL,
     component: CustomersAndSupport,
   },

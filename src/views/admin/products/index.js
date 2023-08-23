@@ -24,15 +24,11 @@ import { Add, Delete, Edit } from "@mui/icons-material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import SearchBar from "../customers/SearchBar";
 import axios from "axios";
-import PropTypes from 'prop-types';
-import SwipeableViews from 'react-swipeable-views';
-import AppBar from '@mui/material/AppBar';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-
-
-
-
+import PropTypes from "prop-types";
+import SwipeableViews from "react-swipeable-views";
+import AppBar from "@mui/material/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -63,11 +59,11 @@ TabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
+    "aria-controls": `full-width-tabpanel-${index}`,
   };
 }
 
- function FullWidthTabs() {
+function FullWidthTabs() {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
@@ -80,8 +76,11 @@ function a11yProps(index) {
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.paper' }}>
-      <AppBar position="static" sx={{backgroundColor:"#11047A",color:'#eee'}}>
+    <Box sx={{ bgcolor: "background.paper" }}>
+      <AppBar
+        position="static"
+        sx={{ backgroundColor: "#11047A", color: "#eee" }}
+      >
         <Tabs
           value={value}
           onChange={handleChange}
@@ -95,7 +94,7 @@ function a11yProps(index) {
         </Tabs>
       </AppBar>
       <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
         index={value}
         onChangeIndex={handleChangeIndex}
       >
@@ -109,8 +108,6 @@ function a11yProps(index) {
     </Box>
   );
 }
-
-
 
 const ProductListing = () => {
   const [open, setOpen] = React.useState(false);
@@ -139,6 +136,8 @@ const ProductListing = () => {
   const [mva, setMva] = useState(null);
   const [unitPrice, setUnitPrice] = useState(null);
   const [expiryDate, setExpiryDate] = useState(null);
+  const [pendingEquipments, setPendingEquipments] = useState([]);
+  const [purchasedEquipments, setPurchasedEquipments] = useState([]);
 
   const fetchEquipments = async () => {
     const headers = {
@@ -147,12 +146,9 @@ const ProductListing = () => {
     };
 
     try {
-      const response = await axios.get(
-        `${BASE_URL}/rafts/get-all-rafts`,
-        {
-          headers,
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/rafts/get-all-rafts`, {
+        headers,
+      });
       const equipmentData = response.data.data;
       setEquipments(equipmentData);
     } catch (error) {
@@ -165,28 +161,34 @@ const ProductListing = () => {
     fetchEquipments();
   }, []);
 
-  const handleDeleteEquipments = async (equipmentId) => {
+  const fetchEquipmentPurchases = async () => {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${API_KEY}`,
     };
 
     try {
-      await axios.post(
-        `${BASE_URL}/equipments/delete-equipment`,
-        { equipmentId },
+      const response = await axios.get(
+        `${BASE_URL}/equipment-purchases/get-purchases`,
         {
           headers,
         }
       );
-      // Remove the deleted equipment from the state
-      setEquipments((prevEquipments) =>
-        prevEquipments.filter((equipment) => equipment._id !== equipmentId)
-      );
+
+      const { pending, purchased } = response.data.data;
+
+      setPendingEquipments(pending);
+      setPurchasedEquipments(purchased);
     } catch (error) {
-      console.error("Error deleting equipment:", error);
+      console.error("Error fetching equipment purchases:", error);
+      setPendingEquipments([]);
+      setPurchasedEquipments([]);
     }
   };
+
+  useEffect(() => {
+    fetchEquipmentPurchases();
+  }, []);
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -196,63 +198,6 @@ const ProductListing = () => {
     return `${year}-${month.toString().padStart(2, "0")}-${day
       .toString()
       .padStart(2, "0")}`;
-  };
-
-  const handleAddEquipments = async () => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${API_KEY}`,
-    };
-
-    try {
-      // Prepare the data to send in the request body
-      const equipmentData = {
-        eq_name: equipmentName,
-        refId: "sds", // Update this with the appropriate value if needed
-        expiry_period: expiryDate ? expiryDate.getTime() : null,
-        mva: mva,
-        unitPrice: unitPrice,
-      };
-
-      if (editEquipmentId) {
-        // If an editEquipmentId is present, it means we are editing an existing equipment
-        // Add the equipmentId to the request body
-        equipmentData.id = editEquipmentId;
-
-        // Make the API call to edit the equipment
-        await axios.post(
-          `${BASE_URL}/equipments/edit-equipment`,
-          equipmentData,
-          {
-            headers,
-          }
-        );
-      } else {
-        // If editEquipmentId is not present, it means we are adding a new equipment
-        // Make the API call to create a new equipment
-        await axios.post(
-          `${BASE_URL}/equipments/create-equipment`,
-          equipmentData,
-          {
-            headers,
-          }
-        );
-      }
-
-      fetchEquipments();
-      handleModalClose();
-    } catch (error) {
-      console.error("Error adding/editing equipment:", error);
-    }
-  };
-
-  const handleEditEquipment = (equipment) => {
-    setEquipmentName(equipment.eq_name);
-    setMva(equipment.mva);
-    setUnitPrice(equipment.unitPrice);
-    setExpiryDate(new Date(equipment.expiry_period));
-    setEditEquipmentId(equipment._id);
-    handleModalOpen();
   };
 
   // const theme = useTheme();
@@ -266,7 +211,6 @@ const ProductListing = () => {
     setValue(index);
   };
 
-
   const theme = createTheme();
   return (
     <ThemeProvider theme={theme}>
@@ -276,137 +220,82 @@ const ProductListing = () => {
         <br />
         <br />
         <br />
-        <Box sx={{ bgcolor: 'background.paper' }}>
-      <AppBar position="static" sx={{backgroundColor:"#11047A",color:'#eee'}}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="secondary"
-          textColor="inherit"
-          variant="fullWidth"
-          aria-label="full width tabs example"
-        >
-          <Tab label="Pending" {...a11yProps(0)} />
-          <Tab label="Purchased" {...a11yProps(1)} />
-        </Tabs>
-      </AppBar>
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-      >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-        <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Raft's Name</TableCell>
-              <TableCell>Serial Number</TableCell>
-              <TableCell>Size</TableCell>
-              <TableCell>Vessel Name</TableCell>
-              <TableCell>Type</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {equipments.map((equipment) => (
-              <TableRow key={equipment._id}>
-                <TableCell>{equipment.raftName}</TableCell>
-                <TableCell>{equipment.serialNumber}</TableCell>
-                <TableCell>{equipment.size}</TableCell>
-                <TableCell>{equipment.vessel.vesselName}</TableCell>
-                <TableCell>{equipment.type}</TableCell>
-
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-        <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Raft's Name</TableCell>
-              <TableCell>Serial Number</TableCell>
-              <TableCell>Size</TableCell>
-              <TableCell>Vessel Name</TableCell>
-              <TableCell>Type</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {equipments.map((equipment) => (
-              <TableRow key={equipment._id}>
-                <TableCell>{equipment.raftName}</TableCell>
-                <TableCell>{equipment.serialNumber}</TableCell>
-                <TableCell>{equipment.size}</TableCell>
-                <TableCell>{equipment.vessel.vesselName}</TableCell>
-                <TableCell>{equipment.type}</TableCell>
-
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-        </TabPanel>
-      </SwipeableViews>
-    </Box>
-      
-
-        <Dialog open={open} onClose={handleModalClose}>
-          <DialogTitle>
-            {editEquipmentId ? "Edit Equipment" : "Add New Equipment"}
-          </DialogTitle>
-
-          <DialogContent>
-            &nbsp;
-            <TextField
-              label="Equipments Name"
-              fullWidth
-              value={equipmentName}
-              onChange={(e) => setEquipmentName(e.target.value)}
-            />
-            &nbsp;
-            <TextField
-              label="Mva"
-              type="number"
-              fullWidth
-              value={mva}
-              onChange={(e) => setMva(parseFloat(e.target.value))}
-            />
-            &nbsp;
-            <TextField
-              label="Unit Price"
-              type="number"
-              fullWidth
-              value={unitPrice}
-              onChange={(e) => setUnitPrice(parseFloat(e.target.value))}
-            />
-            &nbsp;
-            <TextField
-              label="Expiry Date"
-              type="date"
-              fullWidth
-              value={expiryDate ? formatDate(expiryDate) : ""}
-              onChange={(e) => setExpiryDate(new Date(e.target.value))}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </DialogContent>
-
-          <DialogActions>
-            <Button onClick={handleModalClose}>Cancel</Button>
-            <Button
-              sx={{ backgroundColor: "#11047A" }}
-              variant="contained"
-              color="primary"
-              onClick={handleAddEquipments}
+        <Box sx={{ bgcolor: "background.paper" }}>
+          <AppBar
+            position="static"
+            sx={{ backgroundColor: "#11047A", color: "#eee" }}
+          >
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              indicatorColor="secondary"
+              textColor="inherit"
+              variant="fullWidth"
+              aria-label="full width tabs example"
             >
-              {editEquipmentId ? "Edit Equipment" : "Add Equipment"}
-            </Button>
-          </DialogActions>
-        </Dialog>
+              <Tab label="Pending" {...a11yProps(0)} />
+              <Tab label="Purchased" {...a11yProps(1)} />
+            </Tabs>
+          </AppBar>
+          <SwipeableViews
+            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+            index={value}
+            onChangeIndex={handleChangeIndex}
+          >
+            <TabPanel value={value} index={0} dir={theme.direction}>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      {/* Update table headers */}
+                      <TableCell>Equipment Name</TableCell>
+                      <TableCell>Vessel Name</TableCell>
+                      <TableCell>Ordered On</TableCell>
+                      {/* Add more headers as needed */}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {pendingEquipments.map((equipment) => (
+                      <TableRow key={equipment._id}>
+                        {/* Update table cells with relevant data */}
+                        <TableCell>{equipment.equipment.eq_name}</TableCell>
+                        <TableCell>{equipment.vessel.vesselName}</TableCell>
+                        <TableCell>{formatDate(new Date(equipment.ordered_on))}</TableCell>
+                        {/* Add more cells as needed */}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </TabPanel>
+            <TabPanel value={value} index={1} dir={theme.direction}>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      {/* Update table headers */}
+                      <TableCell>Equipment Name</TableCell>
+                      <TableCell>Vessel Name</TableCell>
+                      <TableCell>Ordered On</TableCell>
+                      {/* Add more headers as needed */}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {purchasedEquipments.map((equipment) => (
+                      <TableRow key={equipment._id}>
+                        {/* Update table cells with relevant data */}
+                        <TableCell>{equipment.equipment.eq_name}</TableCell>
+                        <TableCell>{equipment.vessel.vesselName}</TableCell>
+                        <TableCell>{formatDate(new Date(equipment.ordered_on))}</TableCell>
+                        {/* Add more cells as needed */}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </TabPanel>
+          </SwipeableViews>
+        </Box>
       </Container>
     </ThemeProvider>
   );
