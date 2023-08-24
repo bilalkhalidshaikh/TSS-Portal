@@ -620,6 +620,7 @@ import SearchBar from "../customers/SearchBar";
 import { CircularProgress } from "@mui/material";
 import { format } from "date-fns";
 import { enGB } from "date-fns/locale";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const Vessel = () => {
   const [open, setOpen] = React.useState(false);
@@ -664,49 +665,61 @@ const Vessel = () => {
   //         "https://api.raft-service.com/customers/get-all-customers",
   //         { headers }
   //       );
-  //       // Assuming the response data is an array of customers
-  //       setCustomers(response.data.data); // Set customers state with the 'data' property of the response
-  //       console.log(response.data.data); // Check the data in the console
+  //       setCustomers(response.data.data);
+  //       setFilteredCustomers(response.data.data); // Initialize filteredCustomers with all customers
   //     } catch (error) {
   //       console.error("Error fetching customers:", error);
   //     }
   //   };
   //   fetchCustomers();
+  // }, []);
+  // const handleSearchChange = (event) => {
+  //   const query = event.target.value.toLowerCase();
+  //   setSearchQuery(query);
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
-      };
-      try {
-        const response = await axios.get(
-          "https://api.raft-service.com/customers/get-all-customers",
-          { headers }
-        );
-        setCustomers(response.data.data);
-        setFilteredCustomers(response.data.data); // Initialize filteredCustomers with all customers
-      } catch (error) {
-        console.error("Error fetching customers:", error);
-      }
+  //   // Filter customers based on the search query
+  //   const filtered = customers.filter((customer) =>
+  //     customer.customerName.toLowerCase().startsWith(query)
+  //   );
+
+  //   setFilteredCustomers(filtered); // Update the filteredCustomers array
+  // };
+
+ 
+  const fetchCustomers = async () => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
     };
-    fetchCustomers();
-  }, []);
-  const handleSearchChange = (event) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-
-    // Filter customers based on the search query
-    const filtered = customers.filter((customer) =>
-      customer.customerName.toLowerCase().startsWith(query)
-    );
-
-    setFilteredCustomers(filtered); // Update the filteredCustomers array
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/customers/get-all-customers`,
+        { headers }
+      );
+      setCustomers(response.data.data);
+      setFilteredCustomers(response.data.data); // Set both customers and filteredCustomers
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      setCustomers([]); // Set customers to an empty array in case of error
+      setFilteredCustomers([]); // Set filteredCustomers to an empty array as well
+    }
   };
 
+
+  // const handleSearchChange = async (event) => {
+  //   const query = event.target.value.toLowerCase();
+  //   setSearchQuery(query);
+
+  //   if (query.length >= 2) {
+  //     await fetchCustomers(); // Fetch customers from the API based on the search query
+  //   } else {
+  //     setFilteredCustomers([]); // Clear the list when the query is empty or too short
+  //   }
+  // };
+
   useEffect(() => {
-    console.log(customers);
-  }, [customers]);
+    fetchCustomers();
+  });
 
   const [vessels, setVessels] = React.useState([]);
 
@@ -989,34 +1002,25 @@ const Vessel = () => {
               onChange={(e) => setVesselType(e.target.value)}
             />
             &nbsp;
-            <TextField
-              select
-              label="Owner Name"
-              fullWidth
-              value={vesselOwner}
-              onChange={(e) => {
-                setVesselOwner(e.target.value);
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            >
-              {Array.isArray(customers) && customers.length > 0 ? (
-                customers
-                  .filter((customer) =>
-                    customer.customerName
-                      .toLowerCase()
-                      .startsWith(searchQuery.toLowerCase())
-                  )
-                  .map((customer) => (
-                    <MenuItem key={customer._id} value={customer._id}>
-                      {customer.customerName}
-                    </MenuItem>
-                  ))
-              ) : (
-                <MenuItem value="">No customers available</MenuItem>
-              )}
-            </TextField>
+            <Autocomplete
+            options={filteredCustomers}
+            getOptionLabel={(customer) => customer.customerName}
+            value={vesselOwner===undefined?"":vesselOwner}
+            onChange={(_, newValue) => {
+              setVesselOwner(newValue ? newValue : ""); // Update vesselOwner with the selected customer ID
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Owner Name"
+                fullWidth
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            )}
+            isOptionEqualToValue={(option, value) => option._id === value}
+          />
             &nbsp;
           </DialogContent>
           <DialogActions>
@@ -1059,4 +1063,28 @@ export default Vessel;
 //     </MenuItem>
 //   ))
 // )}
+// </TextField>
+
+// <TextField
+//   select
+//   label="Owner Name"
+//   fullWidth
+//   value={vesselOwner}
+//   onChange={(e) => {
+//     handleSearchChange(e);
+//     setVesselOwner(e.target.value);
+//   }}
+//   InputLabelProps={{
+//     shrink: true,
+//   }}
+// >
+//   {filteredCustomers.length > 0 ? (
+//     filteredCustomers.map((customer) => (
+//       <MenuItem key={customer._id} value={customer._id}>
+//         {customer.customerName}
+//       </MenuItem>
+//     ))
+//   ) : (
+//     <MenuItem value="">No customers available</MenuItem>
+//   )}
 // </TextField>
