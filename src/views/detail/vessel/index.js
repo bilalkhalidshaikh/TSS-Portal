@@ -454,8 +454,6 @@
 
 // export default VesselDetail;
 
-
-
 import React, { useEffect, useState } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import {
@@ -489,7 +487,14 @@ import {
   Backdrop,
 } from "@mui/material";
 import KayakingIcon from "@mui/icons-material/Kayaking";
-import { Block, Delete, Add, MoreVert, Edit ,FileCopy} from "@mui/icons-material";
+import {
+  Block,
+  Delete,
+  Add,
+  MoreVert,
+  Edit,
+  FileCopy,
+} from "@mui/icons-material";
 import { MdShop } from "react-icons/md";
 import SailingIcon from "@mui/icons-material/Sailing";
 import AppBar from "@mui/material/AppBar";
@@ -507,8 +512,7 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import DialogContentText from "@mui/material/DialogContentText";
 import { makeStyles } from "@mui/styles";
-import moment from 'moment';
-
+import moment from "moment";
 
 const RootContainer = styled("div")(({ theme }) => ({
   padding: "20px",
@@ -764,8 +768,6 @@ const VesselDetail = (props) => {
   };
 
   const handleEditRaftSubmit = async (id) => {
-
-    
     // Implement the logic to update the raft data
     // Get the values from the form fields
     const updatedRaft = {
@@ -979,12 +981,12 @@ const VesselDetail = (props) => {
       // Replace BASE_URL with your actual API base URL
       // const BASE_URL = "https://api.example.com";
       // const API_KEY = "YOUR_API_KEY"; // Replace this with your actual API key
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
       };
-  
+
       try {
         await axios.post(
           `${BASE_URL}/vessel/disable-vessel`,
@@ -993,9 +995,9 @@ const VesselDetail = (props) => {
             headers,
           }
         );
-        fetchVesselInfo()
+        fetchVesselInfo();
         // Update the isBlocked property of the vessel in the state
-  
+
         // setVessels((prevVessels) =>
         //   prevVessels.map((vessel) =>
         //     vessel._id === vesselId ? { ...vessel, isBlocked: true } : vessel
@@ -1007,15 +1009,15 @@ const VesselDetail = (props) => {
         setIsLoading(false); // Set isLoading to false after the API call is done (success or error)
       }
     };
-  
+
     const handleEnableVessel = async (vesselId) => {
       setIsLoading(true);
-  
+
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
       };
-  
+
       try {
         await axios.post(
           `${BASE_URL}/vessel/enable-vessel`,
@@ -1024,10 +1026,10 @@ const VesselDetail = (props) => {
             headers,
           }
         );
-        fetchVesselInfo()
-  
+        fetchVesselInfo();
+
         // Update the isBlocked property of the vessel in the state
-  
+
         // setVessels((prevVessels) =>
         //   prevVessels.map((vessel) =>
         //     vessel._id === vesselId ? { ...vessel, isBlocked: false } : vessel
@@ -1069,30 +1071,30 @@ const VesselDetail = (props) => {
                   ))}
               </Typography>
               <Stack direction="row" spacing={2}>
-              {Array.isArray(vesselData) &&
-                vesselData.map((vessel) => (
-                  <React.Fragment key={vessel._id}>
-                    {vessel.is_disabled ? (
-                      <Button
-                        color="inherit"
-                        variant="outlined"
-                        disabled={false} // Show the button when the vessel is disabled
-                        onClick={() => handleEnableVessel(vessel._id)}
-                      >
-                        Enable
-                      </Button>
-                    ) : (
-                      <Button
-                        color="inherit"
-                        variant="outlined"
-                        disabled={false} // Show the button when the vessel is enabled
-                        onClick={() => handleDisableVessel(vessel._id)}
-                      >
-                        Disable
-                      </Button>
-                    )}
-                  </React.Fragment>
-                ))}
+                {Array.isArray(vesselData) &&
+                  vesselData.map((vessel) => (
+                    <React.Fragment key={vessel._id}>
+                      {vessel.is_disabled ? (
+                        <Button
+                          color="inherit"
+                          variant="outlined"
+                          disabled={false} // Show the button when the vessel is disabled
+                          onClick={() => handleEnableVessel(vessel._id)}
+                        >
+                          Enable
+                        </Button>
+                      ) : (
+                        <Button
+                          color="inherit"
+                          variant="outlined"
+                          disabled={false} // Show the button when the vessel is enabled
+                          onClick={() => handleDisableVessel(vessel._id)}
+                        >
+                          Disable
+                        </Button>
+                      )}
+                    </React.Fragment>
+                  ))}
 
                 <ConfirmationDialog
                   isOpen={
@@ -1107,6 +1109,13 @@ const VesselDetail = (props) => {
                   onClick={handleShowConfirmationDialog}
                 >
                   Delete
+                </Button>
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  disabled={false} // Show the button when the vessel is disabled
+                >
+                  Change Owner
                 </Button>
               </Stack>
             </Toolbar>
@@ -1299,33 +1308,33 @@ const VesselDetail = (props) => {
       handleClose();
     }
   };
-  
+
   const ConfirmationEqDialog = ({ isOpen, onCancel, onConfirm }) => {
     const dialogStyles = {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
+      position: "fixed",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
       width: 400,
-      backgroundColor: 'white',
+      backgroundColor: "white",
       borderRadius: 8,
-      boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.2)',
-      padding: '16px 24px',
+      boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)",
+      padding: "16px 24px",
       zIndex: 9999,
-      display: isOpen ? 'block' : 'none',
+      display: isOpen ? "block" : "none",
     };
-  
+
     const overlayStyles = {
-      position: 'fixed',
+      position: "fixed",
       top: 0,
       left: 0,
-      width: '100%',
-      height: '100%',
-      backgroundColor: '#0000001f',
+      width: "100%",
+      height: "100%",
+      backgroundColor: "#0000001f",
       zIndex: 9998,
-      display: isOpen ? 'block' : 'none',
+      display: isOpen ? "block" : "none",
     };
-  
+
     return (
       <>
         <div style={overlayStyles} onClick={onCancel}></div>
@@ -1336,7 +1345,13 @@ const VesselDetail = (props) => {
           <Typography variant="body2" component="p" mt={2}>
             Are you sure you want to delete this equipment?
           </Typography>
-          <div style={{ marginTop: 20, display: 'flex', justifyContent: 'flex-end' }}>
+          <div
+            style={{
+              marginTop: 20,
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
             <Button onClick={onCancel} color="primary">
               Cancel
             </Button>
@@ -1348,8 +1363,6 @@ const VesselDetail = (props) => {
       </>
     );
   };
-  
-  
 
   const EditEquipmentDialog = ({
     isOpen,
@@ -1369,11 +1382,11 @@ const VesselDetail = (props) => {
         const selectedEquipment = equipmentData.find(
           (equipment) => equipment._id === selectedEquipmentId
         );
-    
+
         // Convert the API date format to "YYYY-MM-DD"
         const apiDate = selectedEquipment.expiry_date;
         const formattedDate = new Date(apiDate).toISOString().split("T")[0];
-    
+
         setFormValues({
           equipmentId: selectedEquipment.equipment_id,
           expiryDate: formattedDate, // Set the formatted date
@@ -1381,7 +1394,6 @@ const VesselDetail = (props) => {
         });
       }
     }, [selectedEquipmentId, equipmentData]);
-    
 
     const handleInputChange = (event) => {
       const { name, value } = event.target;
@@ -1604,7 +1616,7 @@ const VesselDetail = (props) => {
   const isExpired = (expiryDate) => {
     return moment(expiryDate).isBefore(moment());
   };
-  
+
   return (
     <ThemeProvider theme={theme}>
       <RootContainer>
@@ -1748,7 +1760,7 @@ const VesselDetail = (props) => {
                 raftsData.map((raft) => (
                   <Card sx={{ maxWidth: 445, width: "600px" }} key={raft._id}>
                     {/* Add media image if available */}
-                  
+
                     <CardContent>
                       <Typography
                         gutterBottom
@@ -2021,46 +2033,58 @@ const VesselDetail = (props) => {
             <TableContainerStyled component={Paper}>
               <Table>
                 <TableHead>
-                <TableRow>
-                <TableCell>Equipment Name</TableCell>
-                <TableCell>Expiry Date</TableCell>
-                <TableCell>Expired</TableCell>
-                <TableCell>Certificate</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
+                  <TableRow>
+                    <TableCell>Equipment Name</TableCell>
+                    <TableCell>Expiry Date</TableCell>
+                    <TableCell>Expired</TableCell>
+                    <TableCell>Certificate</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
                 </TableHead>
                 <TableBody>
                   {equipmentData.map((equipment) => (
                     <TableRow key={equipment._id}>
-                <TableCell>{equipment.equipment.eq_name}</TableCell>
-                <TableCell>{moment(equipment.expiry_date).format('YYYY-MM-DD')}</TableCell>
-                <TableCell>{isExpired(equipment.expiry_date) ? 'Yes' : 'No'}</TableCell>
-                <TableCell>
-                {equipment.certificate ? (
-                  <IconButton color="primary" onClick={() => console.log("Certificate")}>
-                    <FileCopy />
-                  </IconButton>
-                ) : (
-                  <IconButton disabled>
-                    <Block />
-                  </IconButton>
-                )}
-              </TableCell>
-                <TableCell>
+                      <TableCell>{equipment.equipment.eq_name}</TableCell>
+                      <TableCell>
+                        {moment(equipment.expiry_date).format("YYYY-MM-DD")}
+                      </TableCell>
+                      <TableCell>
+                        {isExpired(equipment.expiry_date) ? "Yes" : "No"}
+                      </TableCell>
+                      <TableCell>
+                        {equipment.certificate ? (
+                          <IconButton
+                            color="primary"
+                            onClick={() => console.log("Certificate")}
+                          >
+                          <Link to="https://www.africau.edu/images/default/sample.pdf">
+                          <FileCopy />
+                          </Link>
+                          </IconButton>
+                        ) : (
+                          <IconButton disabled>
+                            <Block />
+                          </IconButton>
+                        )}
+                      </TableCell>
+                      <TableCell>
                         <IconButton
                           color="primary"
                           onClick={() => handleEditEquipment(equipment._id)}
                         >
                           <Edit />
                         </IconButton>
-                        <IconButton color="secondary" onClick={() => setShowEqConfirmationDialog(true)}>
-                        <Delete />
-                      </IconButton>
-                      <ConfirmationEqDialog
-                        isOpen={showEqConfirmationDialog}
-                        onCancel={() => setShowEqConfirmationDialog(false)}
-                        onConfirm={() => handleDeleteEquipment(equipment._id)}
-                      />
+                        <IconButton
+                          color="secondary"
+                          onClick={() => setShowEqConfirmationDialog(true)}
+                        >
+                          <Delete />
+                        </IconButton>
+                        <ConfirmationEqDialog
+                          isOpen={showEqConfirmationDialog}
+                          onCancel={() => setShowEqConfirmationDialog(false)}
+                          onConfirm={() => handleDeleteEquipment(equipment._id)}
+                        />
                         <EditEquipmentDialog
                           isOpen={showEditDialog}
                           equipmentData={equipmentData}
@@ -2081,7 +2105,6 @@ const VesselDetail = (props) => {
   );
 };
 
-
 // //   <CardMedia
 // sx={{
 //   height: 140,
@@ -2094,4 +2117,3 @@ const VesselDetail = (props) => {
 // />
 
 export default VesselDetail;
-

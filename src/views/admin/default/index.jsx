@@ -1,22 +1,19 @@
 import React from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Card, CardContent, Grid, Typography, Stack } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
 import ThreeDRotationIcon from "@mui/icons-material/ThreeDRotation";
 import { DataGrid } from "@mui/x-data-grid";
+import EquipmentPurchases from "../products";
+import Requested from "../requested";
+import Rafts from "../rafts";
 
 const theme = createTheme();
 
 const useStyles = makeStyles(() => ({
   card: {
-    height: "100%",
+    height: "80%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -26,6 +23,7 @@ const useStyles = makeStyles(() => ({
     backdropFilter: "blur(10px)",
     boxShadow: "0px 8px 32px rgba(31, 38, 135, 0.37)",
     color: "white",
+    textAlign: "center",
   },
   table: {
     height: 400,
@@ -151,19 +149,32 @@ const Dashboard = () => {
           <Typography variant="h5" gutterBottom>
             Recent Activities
           </Typography>
-          <div style={{ height: 400, width: "100%" }}>
-            <DataGrid
-              className={classes.table}
-              rows={activities}
-              columns={columns}
-              pageSize={5}
-              disableSelectionOnClick
-            />
-          </div>
-        </Box>
+          <Grid
+            container
+            rowSpacing={1}
+            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          >
+            <Grid item xs={6}>
+              <EquipmentPurchases title={" Equipment Purchases"} />
+            </Grid>
+            <Grid item xs={6}>
+              <Requested title={" Requested Services"} />
+            </Grid>
+          </Grid>
+          </Box>
       </Box>
     </ThemeProvider>
   );
 };
 
 export default Dashboard;
+
+// <div style={{ height: 400, width: "100%" }}>
+//   <DataGrid
+//     className={classes.table}
+//     rows={activities}
+//     columns={columns}
+//     pageSize={5}
+//     disableSelectionOnClick
+//   />
+// </div>

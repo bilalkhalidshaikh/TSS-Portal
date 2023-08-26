@@ -1005,7 +1005,7 @@ const Vessel = () => {
             <Autocomplete
             options={filteredCustomers}
             getOptionLabel={(customer) => customer.customerName}
-            value={vesselOwner===undefined?"":vesselOwner}
+            // value={vesselOwner?vesselOwner:"Select Owner"}
             onChange={(_, newValue) => {
               setVesselOwner(newValue ? newValue : ""); // Update vesselOwner with the selected customer ID
             }}
@@ -1017,8 +1017,10 @@ const Vessel = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                placeholder="Select Owner"
               />
             )}
+            placeholder="Select Owner"
             isOptionEqualToValue={(option, value) => option._id === value}
           />
             &nbsp;

@@ -63,7 +63,7 @@ function a11yProps(index) {
   };
 }
 
-const RequestedServices = () => {
+const RequestedServices = ({title}) => {
   const BASE_URL = "https://api.raft-service.com";
   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
 
@@ -140,6 +140,10 @@ const RequestedServices = () => {
         <br />
         <br />
         <br />
+        <Typography variant="h6" >
+        {title}
+        </Typography>
+        <br/>
         <Box sx={{ bgcolor: "background.paper" }}>
           <AppBar
             position="static"
@@ -171,6 +175,7 @@ const RequestedServices = () => {
                       <TableCell>Customer Name</TableCell>
                       <TableCell>Raft Name</TableCell>
                       <TableCell>Requested On</TableCell>
+                      <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -185,6 +190,16 @@ const RequestedServices = () => {
                           <TableCell>
                             {formatDate(new Date(service?.ordered_on))}
                           </TableCell>
+                          <TableCell>
+                          <IconButton >
+                            <Edit />
+                          </IconButton>
+                          <IconButton
+                           
+                          >
+                            <Delete />
+                          </IconButton>
+                        </TableCell>
                         </TableRow>
                       ))
                     ) : (
@@ -206,6 +221,7 @@ const RequestedServices = () => {
                       <TableCell>Customer Name</TableCell>
                       <TableCell>Raft Name</TableCell>
                       <TableCell>Requested On</TableCell>
+                      <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -217,6 +233,16 @@ const RequestedServices = () => {
                         <TableCell>
                           {formatDate(new Date(service?.ordered_on))}
                         </TableCell>
+                        <TableCell>
+                        <IconButton >
+                         <Button>Finish</Button>
+                        </IconButton>
+                        <IconButton
+                         
+                        >
+                          <Delete />
+                        </IconButton>
+                      </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

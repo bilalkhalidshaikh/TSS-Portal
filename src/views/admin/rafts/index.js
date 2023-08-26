@@ -112,7 +112,7 @@ function a11yProps(index) {
 
 
 
-const Rafts = () => {
+const Rafts = ({title}) => {
   const [open, setOpen] = React.useState(false);
   const BASE_URL = "https://api.raft-service.com";
   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
@@ -276,6 +276,10 @@ const Rafts = () => {
         <br />
         <br />
         <br />
+          <Typography variant="h6" >
+        {title}
+        </Typography>
+         <br/>
         <Box sx={{ bgcolor: 'background.paper' }}>
       <AppBar position="static" sx={{backgroundColor:"#11047A",color:'#eee'}}>
         <Tabs
@@ -305,6 +309,7 @@ const Rafts = () => {
               <TableCell>Size</TableCell>
               <TableCell>Vessel Name</TableCell>
               <TableCell>Type</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -315,6 +320,14 @@ const Rafts = () => {
                 <TableCell>{equipment.size}</TableCell>
                 <TableCell>{equipment.vessel.vesselName}</TableCell>
                 <TableCell>{equipment.type}</TableCell>
+                <TableCell>
+                      
+                <IconButton
+                 
+                >
+                  <Delete />
+                </IconButton>
+              </TableCell>
 
               </TableRow>
             ))}
@@ -332,6 +345,7 @@ const Rafts = () => {
               <TableCell>Size</TableCell>
               <TableCell>Vessel Name</TableCell>
               <TableCell>Type</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -342,7 +356,14 @@ const Rafts = () => {
                 <TableCell>{equipment.size}</TableCell>
                 <TableCell>{equipment.vessel.vesselName}</TableCell>
                 <TableCell>{equipment.type}</TableCell>
-
+                <TableCell>
+                      
+                <IconButton
+                 
+                >
+                  <Delete />
+                </IconButton>
+              </TableCell>
               </TableRow>
             ))}
           </TableBody>

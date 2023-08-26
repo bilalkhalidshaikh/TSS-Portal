@@ -29,6 +29,8 @@ import SwipeableViews from "react-swipeable-views";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -109,7 +111,7 @@ function FullWidthTabs() {
   );
 }
 
-const ProductListing = () => {
+const ProductListing = ({title}) => {
   const [open, setOpen] = React.useState(false);
   const BASE_URL = "https://api.raft-service.com";
   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
@@ -212,6 +214,12 @@ const ProductListing = () => {
   };
 
   const theme = createTheme();
+
+  const [alignment, setAlignment] = React.useState('pending');
+
+  const handleChangeToggle = (event, newAlignment) => {
+    setAlignment(newAlignment);
+  };
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -220,6 +228,10 @@ const ProductListing = () => {
         <br />
         <br />
         <br />
+        <Typography variant="h6" >
+        {title}
+        </Typography>
+        <br/>
         <Box sx={{ bgcolor: "background.paper" }}>
           <AppBar
             position="static"
@@ -251,6 +263,9 @@ const ProductListing = () => {
                       <TableCell>Equipment Name</TableCell>
                       <TableCell>Vessel Name</TableCell>
                       <TableCell>Ordered On</TableCell>
+                      <TableCell>Change Status</TableCell>
+                      <TableCell>Actions</TableCell>
+
                       {/* Add more headers as needed */}
                     </TableRow>
                   </TableHead>
@@ -261,6 +276,24 @@ const ProductListing = () => {
                         <TableCell>{equipment.equipment.eq_name}</TableCell>
                         <TableCell>{equipment.vessel.vesselName}</TableCell>
                         <TableCell>{formatDate(new Date(equipment.ordered_on))}</TableCell>
+                        <TableCell>    <ToggleButtonGroup
+                        color="primary"
+                        value={alignment}
+                        exclusive
+                        onChange={handleChangeToggle}
+                        aria-label="Platform"
+                      >
+                        <ToggleButton value="pending">Pending</ToggleButton>
+                        <ToggleButton value="purchased">Purchased</ToggleButton>
+                      </ToggleButtonGroup></TableCell>
+                      <TableCell>
+                      
+                      <IconButton
+                       
+                      >
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
                         {/* Add more cells as needed */}
                       </TableRow>
                     ))}
@@ -277,6 +310,8 @@ const ProductListing = () => {
                       <TableCell>Equipment Name</TableCell>
                       <TableCell>Vessel Name</TableCell>
                       <TableCell>Ordered On</TableCell>
+                      <TableCell>Change Status</TableCell>
+                      <TableCell>Actions</TableCell>
                       {/* Add more headers as needed */}
                     </TableRow>
                   </TableHead>
@@ -288,8 +323,27 @@ const ProductListing = () => {
                         <TableCell>{equipment.vessel.vesselName}</TableCell>
                         <TableCell>{formatDate(new Date(equipment.ordered_on))}</TableCell>
                         {/* Add more cells as needed */}
+                        <TableCell>    <ToggleButtonGroup
+                        color="primary"
+                        value={alignment}
+                        exclusive
+                        onChange={handleChangeToggle}
+                        aria-label="Platform"
+                      >
+                        <ToggleButton value="pending">Pending</ToggleButton>
+                        <ToggleButton value="purchased">Purchased</ToggleButton>
+                      </ToggleButtonGroup></TableCell>
+                      <TableCell>
+                      
+                      <IconButton
+                       
+                      >
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
                       </TableRow>
                     ))}
+
                   </TableBody>
                 </Table>
               </TableContainer>
