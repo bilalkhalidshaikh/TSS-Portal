@@ -2057,7 +2057,7 @@ const VesselDetail = (props) => {
                             color="primary"
                             onClick={() => console.log("Certificate")}
                           >
-                          <Link to="https://www.africau.edu/images/default/sample.pdf">
+                          <Link target="_blank" to="https://www.africau.edu/images/default/sample.pdf">
                           <FileCopy />
                           </Link>
                           </IconButton>
