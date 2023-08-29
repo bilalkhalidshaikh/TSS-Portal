@@ -255,9 +255,13 @@ const RequestedServices = ({title}) => {
                           }
                         >
                         {service.service_done ? (
-                          <Button>Switch Pending</Button>
+                          <Button     color="inherit"
+                          variant="outlined"
+                          disabled={false}>Switch Pending</Button>
                         ) : (
-                          <Button>Switch Finish</Button>
+                          <Button     color="inherit"
+                          variant="outlined"
+                          disabled={false}>Switch Finish</Button>
                         )}
                         </IconButton>
                         <IconButton
@@ -312,9 +316,13 @@ const RequestedServices = ({title}) => {
                             >
                            
                           {service.service_done ? (
-                            <Button>Switch Pending</Button>
+                            <Button     color="inherit"
+                            variant="outlined"
+                            disabled={false}>Switch Pending</Button>
                           ) : (
-                            <Button>Switch Finish</Button>
+                            <Button     color="inherit"
+                            variant="outlined"
+                            disabled={false}>Switch Finish</Button>
                           )}
                             </IconButton>
                             <IconButton

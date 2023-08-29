@@ -362,7 +362,6 @@ const Rafts = ({ title }) => {
                       <TableCell>Size</TableCell>
                       <TableCell>Vessel Name</TableCell>
                       <TableCell>Type</TableCell>
-                      <TableCell>Change Status</TableCell>
                       <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
@@ -374,19 +373,7 @@ const Rafts = ({ title }) => {
                         <TableCell>{equipment.size}</TableCell>
                         <TableCell>{equipment.vessel.vesselName}</TableCell>
                         <TableCell>{equipment.type}</TableCell>
-                        <TableCell>
-                          <IconButton
-                            onClick={() =>
-                              handleChangeRaftRequestStatus(equipment._id)
-                            }
-                          >
-                            {equipment.service_done ? (
-                              <span>Finish</span>
-                            ) : (
-                              <span>Pending</span>
-                            )}
-                          </IconButton>
-                        </TableCell>
+                  
 
                         <TableCell>
                           <IconButton
@@ -413,7 +400,6 @@ const Rafts = ({ title }) => {
                       <TableCell>Size</TableCell>
                       <TableCell>Vessel Name</TableCell>
                       <TableCell>Type</TableCell>
-                      <TableCell>Change Status</TableCell>
                       <TableCell>Actions</TableCell>
                     </TableRow>
                   </TableHead>
@@ -425,19 +411,7 @@ const Rafts = ({ title }) => {
                         <TableCell>{equipment.size}</TableCell>
                         <TableCell>{equipment.vessel.vesselName}</TableCell>
                         <TableCell>{equipment.type}</TableCell>
-                        <TableCell>
-                          <IconButton
-                            onClick={() =>
-                              handleChangeRaftRequestStatus(equipment._id)
-                            }
-                          >
-                            {equipment.service_done ? (
-                              <span>Finish</span>
-                            ) : (
-                              <span>Pending</span>
-                            )}
-                          </IconButton>
-                        </TableCell>
+                        
 
                         <TableCell>
                           <IconButton

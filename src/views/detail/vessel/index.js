@@ -1245,7 +1245,7 @@ const VesselDetail = (props) => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Owner Name"
+                // label="Owner Name"
                 fullWidth
                 InputLabelProps={{
                   shrink: true,
@@ -1279,6 +1279,8 @@ const VesselDetail = (props) => {
         </Button>
         </DialogActions>
       </BootstrapDialog>
+
+      
       {/* Display Alert */}
       <Snackbar
         open={alertOpen}

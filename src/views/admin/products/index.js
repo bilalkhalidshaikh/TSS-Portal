@@ -369,30 +369,30 @@ const ProductListing = ({ title }) => {
                           {formatDate(new Date(equipment.ordered_on))}
                         </TableCell>
                         <TableCell>
-                          <FormControlLabel
-                            control={
-                              <Switch
-                                checked={
-                                  pendingSwitchState[equipment._id] || false
-                                }
-                                onChange={() => {
-                                  const newSwitchState = {
-                                    ...pendingSwitchState,
-                                    [equipment._id]:
-                                      !pendingSwitchState[equipment._id],
-                                  };
-                                  setPendingSwitchState(newSwitchState);
-                                  handlePurchaseStatusChange(
-                                    equipment._id,
-                                    newSwitchState[equipment._id],
-                                    fetchEquipmentPurchases
-                                  );
-                                 
-                                }}
-                              />
-                            }
-                            label="Purchased"
-                          />
+                  
+
+
+
+
+                        <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() =>
+                          handlePurchaseStatusChange(
+                            equipment._id,
+                            true,
+                            fetchEquipmentPurchases
+                          )
+                        }
+                      >
+                      {equipment.is_added ?" Mark as Pending" :" Mark as Purchased"}
+                      </Button>
+      
+
+
+
+
+
                         </TableCell>
                           <TableCell>
                             <IconButton
@@ -436,30 +436,26 @@ const ProductListing = ({ title }) => {
                         {/* Add more cells as needed */}
 
                         <TableCell>
-                          <FormControlLabel
-                            control={
-                              <Switch
-                                checked={
-                                  purchasedSwitchState[equipment._id] || false
-                                }
-                                onChange={() => {
-                                  const newSwitchState = {
-                                    ...purchasedSwitchState,
-                                    [equipment._id]:
-                                      !purchasedSwitchState[equipment._id],
-                                  };
-                                  setPurchasedSwitchState(newSwitchState);
-                                  handlePurchaseStatusChange(
-                                    equipment._id,
-                                    newSwitchState[equipment._id],
-                                    fetchEquipmentPurchases
-                                  );
-                                  
-                                }}
-                              />
-                            }
-                            label="Purchased"
-                          />
+                        
+
+                        <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() =>
+                          handlePurchaseStatusChange(
+                            equipment._id,
+                            true,
+                            fetchEquipmentPurchases
+                          )
+                        }
+                      >
+                      {equipment.is_added ?" Mark as Pending" :" Mark as Purchased"}
+                       
+                      </Button>
+      
+
+
+
                         </TableCell>
                         <TableCell>
                         <IconButton
@@ -518,3 +514,32 @@ const ProductListing = ({ title }) => {
 };
 
 export default ProductListing;
+
+
+
+
+
+// <FormControlLabel
+// control={
+//   <Switch
+//     checked={
+//       pendingSwitchState[equipment._id] || false
+//     }
+//     onChange={() => {
+//       const newSwitchState = {
+//         ...pendingSwitchState,
+//         [equipment._id]:
+//           !pendingSwitchState[equipment._id],
+//       };
+//       setPendingSwitchState(newSwitchState);
+//       handlePurchaseStatusChange(
+//         equipment._id,
+//         newSwitchState[equipment._id],
+//         fetchEquipmentPurchases
+//       );
+     
+//     }}
+//   />
+// }
+// label="Purchased"
+// />
