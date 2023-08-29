@@ -29,8 +29,15 @@ import SwipeableViews from "react-swipeable-views";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Switch from "@mui/material/Switch";
+import FormLabel from "@mui/material/FormLabel";
+import FormControl from "@mui/material/FormControl";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormHelperText from "@mui/material/FormHelperText";
+import { CircularProgress } from "@mui/material";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -111,7 +118,7 @@ function FullWidthTabs() {
   );
 }
 
-const ProductListing = ({title}) => {
+const ProductListing = ({ title }) => {
   const [open, setOpen] = React.useState(false);
   const BASE_URL = "https://api.raft-service.com";
   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
@@ -140,6 +147,7 @@ const ProductListing = ({title}) => {
   const [expiryDate, setExpiryDate] = useState(null);
   const [pendingEquipments, setPendingEquipments] = useState([]);
   const [purchasedEquipments, setPurchasedEquipments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchEquipments = async () => {
     const headers = {
@@ -164,6 +172,7 @@ const ProductListing = ({title}) => {
   }, []);
 
   const fetchEquipmentPurchases = async () => {
+    setIsLoading(true)
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${API_KEY}`,
@@ -178,7 +187,7 @@ const ProductListing = ({title}) => {
       );
 
       const { pending, purchased } = response.data.data;
-
+      setIsLoading(false)
       setPendingEquipments(pending);
       setPurchasedEquipments(purchased);
     } catch (error) {
@@ -215,11 +224,94 @@ const ProductListing = ({title}) => {
 
   const theme = createTheme();
 
-  const [alignment, setAlignment] = React.useState('pending');
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [selectedPurchaseId, setSelectedPurchaseId] = useState(null);
+  const [pendingSwitchState, setPendingSwitchState] = React.useState({});
+  const [purchasedSwitchState, setPurchasedSwitchState] = React.useState({});
+
+  const handleDeleteConfirmationOpen = (purchaseId) => {
+    setSelectedPurchaseId(purchaseId);
+    setDeleteConfirmationOpen(true);
+  };
+
+  const handleDeleteConfirmationClose = () => {
+    setSelectedPurchaseId(null);
+    setDeleteConfirmationOpen(false);
+  };
+
+  const handlePurchaseStatusChange = async (purchaseId, isPurchased,fetch) => {
+    setIsLoading(true)
+    fetch()
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+      };
+
+      const body = {
+        purchaseId: purchaseId,
+      };
+
+      await axios.post(
+        `${BASE_URL}/equipment-purchases/change-purchase-status`,
+        body,
+        {
+          headers,
+        }
+      );
+      fetch()
+      fetchEquipmentPurchases();
+      setIsLoading(false)
+    } catch (error) {
+      console.error("Error changing purchase status:", error);
+    }
+  };
+
+  const handleDeletePurchaseRequest = async () => {
+    setIsLoading(true)
+    if (selectedPurchaseId) {
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${API_KEY}`,
+        };
+
+        const body = {
+          purchaseId: selectedPurchaseId,
+        };
+
+        await axios.post(
+          `${BASE_URL}/equipment-purchases/delete-purchase-request`,
+          body,
+          {
+            headers,
+          }
+        );
+        setIsLoading(false)
+        fetchEquipmentPurchases();
+        handleDeleteConfirmationClose();
+      } catch (error) {
+        console.error("Error deleting purchase request:", error);
+      }
+    }
+  };
+
+  const [alignment, setAlignment] = React.useState("pending");
 
   const handleChangeToggle = (event, newAlignment) => {
     setAlignment(newAlignment);
   };
+  const [state, setState] = React.useState({
+    purchased: false,
+    pending: false,
+  });
+  const handleSwitchChange = (event) => {
+    setState({
+      ...state,
+      [event.target.name]: event.target.checked,
+    });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -228,10 +320,8 @@ const ProductListing = ({title}) => {
         <br />
         <br />
         <br />
-        <Typography variant="h6" >
-        {title}
-        </Typography>
-        <br/>
+        <Typography variant="h6">{title}</Typography>
+        <br />
         <Box sx={{ bgcolor: "background.paper" }}>
           <AppBar
             position="static"
@@ -275,25 +365,44 @@ const ProductListing = ({title}) => {
                         {/* Update table cells with relevant data */}
                         <TableCell>{equipment.equipment.eq_name}</TableCell>
                         <TableCell>{equipment.vessel.vesselName}</TableCell>
-                        <TableCell>{formatDate(new Date(equipment.ordered_on))}</TableCell>
-                        <TableCell>    <ToggleButtonGroup
-                        color="primary"
-                        value={alignment}
-                        exclusive
-                        onChange={handleChangeToggle}
-                        aria-label="Platform"
-                      >
-                        <ToggleButton value="pending">Pending</ToggleButton>
-                        <ToggleButton value="purchased">Purchased</ToggleButton>
-                      </ToggleButtonGroup></TableCell>
-                      <TableCell>
-                      
-                      <IconButton
-                       
-                      >
-                        <Delete />
-                      </IconButton>
-                    </TableCell>
+                        <TableCell>
+                          {formatDate(new Date(equipment.ordered_on))}
+                        </TableCell>
+                        <TableCell>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={
+                                  pendingSwitchState[equipment._id] || false
+                                }
+                                onChange={() => {
+                                  const newSwitchState = {
+                                    ...pendingSwitchState,
+                                    [equipment._id]:
+                                      !pendingSwitchState[equipment._id],
+                                  };
+                                  setPendingSwitchState(newSwitchState);
+                                  handlePurchaseStatusChange(
+                                    equipment._id,
+                                    newSwitchState[equipment._id],
+                                    fetchEquipmentPurchases
+                                  );
+                                 
+                                }}
+                              />
+                            }
+                            label="Purchased"
+                          />
+                        </TableCell>
+                          <TableCell>
+                            <IconButton
+                              onClick={() =>
+                                handleDeleteConfirmationOpen(equipment._id)
+                              }
+                            >
+                              <Delete />
+                            </IconButton>
+                          </TableCell>
                         {/* Add more cells as needed */}
                       </TableRow>
                     ))}
@@ -321,34 +430,87 @@ const ProductListing = ({title}) => {
                         {/* Update table cells with relevant data */}
                         <TableCell>{equipment.equipment.eq_name}</TableCell>
                         <TableCell>{equipment.vessel.vesselName}</TableCell>
-                        <TableCell>{formatDate(new Date(equipment.ordered_on))}</TableCell>
+                        <TableCell>
+                          {formatDate(new Date(equipment.ordered_on))}
+                        </TableCell>
                         {/* Add more cells as needed */}
-                        <TableCell>    <ToggleButtonGroup
-                        color="primary"
-                        value={alignment}
-                        exclusive
-                        onChange={handleChangeToggle}
-                        aria-label="Platform"
-                      >
-                        <ToggleButton value="pending">Pending</ToggleButton>
-                        <ToggleButton value="purchased">Purchased</ToggleButton>
-                      </ToggleButtonGroup></TableCell>
-                      <TableCell>
-                      
-                      <IconButton
-                       
-                      >
-                        <Delete />
-                      </IconButton>
-                    </TableCell>
+
+                        <TableCell>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={
+                                  purchasedSwitchState[equipment._id] || false
+                                }
+                                onChange={() => {
+                                  const newSwitchState = {
+                                    ...purchasedSwitchState,
+                                    [equipment._id]:
+                                      !purchasedSwitchState[equipment._id],
+                                  };
+                                  setPurchasedSwitchState(newSwitchState);
+                                  handlePurchaseStatusChange(
+                                    equipment._id,
+                                    newSwitchState[equipment._id],
+                                    fetchEquipmentPurchases
+                                  );
+                                  
+                                }}
+                              />
+                            }
+                            label="Purchased"
+                          />
+                        </TableCell>
+                        <TableCell>
+                        <IconButton
+                          onClick={() =>
+                            handleDeleteConfirmationOpen(equipment._id)
+                          }
+                        >
+                          <Delete />
+                        </IconButton>
+                      </TableCell>
                       </TableRow>
                     ))}
-
                   </TableBody>
                 </Table>
               </TableContainer>
             </TabPanel>
           </SwipeableViews>
+          {/* Delete Confirmation Dialog */}
+          <Dialog
+            open={deleteConfirmationOpen}
+            onClose={handleDeleteConfirmationClose}
+          >
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogContent>
+              Are you sure you want to delete this purchase request?
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDeleteConfirmationClose}>Cancel</Button>
+              <Button onClick={handleDeletePurchaseRequest} color="error">
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+          {isLoading && (
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(0, 0, 0, 0.5)",
+                zIndex: 9999,
+              }}
+            >
+              <CircularProgress color="primary" />
+            </div>
+          )}
         </Box>
       </Container>
     </ThemeProvider>

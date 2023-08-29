@@ -132,6 +132,64 @@ const RequestedServices = ({title}) => {
   };
 
   const theme = createTheme();
+
+  
+  const handleChangeRaftRequestStatus = async (requestId) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
+    };
+
+    try {
+      await axios.post(
+        `${BASE_URL}/services/change-raft-request-status`,
+        { requestId },
+        {
+          headers,
+        }
+      );
+      // Update the status of the raft request in the state
+      // setEquipments((prevEquipments) =>
+      //   prevEquipments.map((equipment) => {
+      //     if (equipment._id === requestId) {
+      //       return {
+      //         ...equipment,
+      //         // Toggle the service_done status
+      //         service_done: !equipment.service_done,
+      //       };
+      //     }
+      //     return equipment;
+      //   })
+      // );
+      fetchRequestedServices()
+    } catch (error) {
+      console.error("Error changing raft request status:", error);
+    }
+  };
+
+  const handleDeleteServiceRequest = async (requestId) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
+    };
+
+    try {
+      await axios.post(
+        `${BASE_URL}/services/delete-service-request`,
+        { requestId },
+        {
+          headers,
+        }
+      );
+      // Remove the deleted service request from the state
+      // setEquipments((prevEquipments) =>
+      //   prevEquipments.filter((equipment) => equipment._id !== requestId)
+      // );
+      fetchRequestedServices()
+    } catch (error) {
+      console.error("Error deleting service request:", error);
+    }
+  };
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -191,14 +249,24 @@ const RequestedServices = ({title}) => {
                             {formatDate(new Date(service?.ordered_on))}
                           </TableCell>
                           <TableCell>
-                          <IconButton >
-                            <Edit />
-                          </IconButton>
                           <IconButton
-                           
-                          >
-                            <Delete />
-                          </IconButton>
+                          onClick={() =>
+                            handleChangeRaftRequestStatus(service._id)
+                          }
+                        >
+                        {service.service_done ? (
+                          <Button>Switch Pending</Button>
+                        ) : (
+                          <Button>Switch Finish</Button>
+                        )}
+                        </IconButton>
+                        <IconButton
+                        onClick={() =>
+                          handleDeleteServiceRequest(service._id)
+                        }
+                      >
+                        <Delete />
+                      </IconButton>
                         </TableCell>
                         </TableRow>
                       ))
@@ -225,26 +293,50 @@ const RequestedServices = ({title}) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {requestedFinishedServices.map((service) => (
-                      <TableRow key={service?._id}>
-                        <TableCell>{service?.vessel?.vesselName}</TableCell>
-                        <TableCell>{service?.customer?.customerName}</TableCell>
-                        <TableCell>{service?.raft?.raftName}</TableCell>
-                        <TableCell>
-                          {formatDate(new Date(service?.ordered_on))}
-                        </TableCell>
-                        <TableCell>
-                        <IconButton >
-                         <Button>Finish</Button>
-                        </IconButton>
-                        <IconButton
-                         
-                        >
-                          <Delete />
-                        </IconButton>
-                      </TableCell>
+                  
+                  {
+                    requestedFinishedServices.length ? (
+                      requestedFinishedServices.map((service) => (
+                        <TableRow key={service?._id}>
+                          <TableCell>{service?.vessel?.vesselName}</TableCell>
+                          <TableCell>{service?.customer?.customerName}</TableCell>
+                          <TableCell>{service?.raft?.raftName}</TableCell>
+                          <TableCell>
+                            {formatDate(new Date(service?.ordered_on))}
+                          </TableCell>
+                          <TableCell>
+                            <IconButton
+                              onClick={() =>
+                                handleChangeRaftRequestStatus(service._id)
+                              }
+                            >
+                           
+                          {service.service_done ? (
+                            <Button>Switch Pending</Button>
+                          ) : (
+                            <Button>Switch Finish</Button>
+                          )}
+                            </IconButton>
+                            <IconButton
+                              onClick={() =>
+                                handleDeleteServiceRequest(service._id)
+                              }
+                            >
+                              <Delete />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5}>Nothing to show here</TableCell>
                       </TableRow>
-                    ))}
+                    )
+                  }
+                  
+                   
+
+
                   </TableBody>
                 </Table>
               </TableContainer>

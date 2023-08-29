@@ -485,6 +485,9 @@ import {
   FormControl,
   InputLabel,
   Backdrop,
+  Autocomplete,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import KayakingIcon from "@mui/icons-material/Kayaking";
 import {
@@ -1042,8 +1045,110 @@ const VesselDetail = (props) => {
       }
     };
 
+    const [open, setOpen] = React.useState(false);
+    const [vesselOwner, setVesselOwner] = useState(""); // Store selected owner ID
+    const [availableOwners, setAvailableOwners] = useState([]); // Store available owners from API
+    const [isOLoading, setIsOLoading] = useState(false); // Loading state for API calls
+    const [alertOpen, setAlertOpen] = useState(false);
+    const [alertSeverity, setAlertSeverity] = useState("success");
+    const [alertMessage, setAlertMessage] = useState("");
+
+    // Function to show an alert
+    const showAlert = (severity, message) => {
+      setAlertSeverity(severity);
+      setAlertMessage(message);
+      setAlertOpen(true);
+    };
+  
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
+    // Fetch available owners from the API
+    const fetchAvailableOwners = async () => {
+      setIsOLoading(true);
+      try {
+        const response = await axios.get(`${BASE_URL}/customers/get-all-customers`, {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        });
+        setAvailableOwners(response.data.data);
+      } catch (error) {
+        console.error("Error fetching available owners:", error);
+      }
+      setIsOLoading(false);
+    };
+  
+    useEffect(() => {
+      fetchAvailableOwners();
+    }, []);
+
+
+    // Function to change vessel owner
+
+  
+  // Function to change vessel owner
+  const handleChangeVesselOwner = async (vesselId) => {
+    if (vesselOwner) {
+      try {
+        setIsOLoading(true);
+        const requestBody = {
+          newCustomerId: vesselOwner,
+          vesselId: vesselId, // Replace with the actual vessel ID
+        };
+        await axios.post(`${BASE_URL}/vessel/change-vessel-owner`, requestBody, {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        });
+        fetchVesselInfo();
+        setIsOLoading(false);
+        showAlert("success", "Vessel owner changed successfully!");
+      } catch (error) {
+        console.error("Error changing vessel owner:", error);
+        setIsOLoading(false);
+        showAlert("error", "Error changing vessel owner. Please try again.");
+      }
+    } else {
+      showAlert("error", "Please select a new owner.");
+    }
+  };
+
+
+  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+      padding: theme.spacing(5),
+      width:'300px'
+    },
+    '& .MuiDialogActions-root': {
+      padding: theme.spacing(2),
+    },
+  }));
+
     return (
       <>
+      {isOLoading && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            zIndex: 9999,
+          }}
+        >
+          <CircularProgress color="primary" />
+        </div>
+      )}
         <Box sx={{ flexGrow: 1 }}>
           <AppBar
             position="static"
@@ -1110,17 +1215,90 @@ const VesselDetail = (props) => {
                 >
                   Delete
                 </Button>
+
                 <Button
-                  color="inherit"
-                  variant="outlined"
-                  disabled={false} // Show the button when the vessel is disabled
-                >
-                  Change Owner
-                </Button>
+                color="inherit"
+                variant="outlined"
+                disabled={isOLoading} // Disable the button during API calls
+                onClick={handleClickOpen}
+              >
+                Change Owner
+              </Button>
+            
               </Stack>
             </Toolbar>
           </AppBar>
         </Box>
+
+
+
+        <BootstrapDialog open={open}  aria-labelledby="customized-dialog-title" onClose={handleClose}>
+        <DialogTitle>Change Vessel Owner</DialogTitle>
+        <DialogContent>
+          <Autocomplete
+            options={availableOwners}
+            getOptionLabel={(customer) => customer.customerName}
+           // Use selected owner ID as value
+            onChange={(_, newValue) => {
+              setVesselOwner(newValue ? newValue : ""); // Update vesselOwner with the selected customer ID
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Owner Name"
+                fullWidth
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                placeholder="Select Owner"
+              />
+            )}
+            isOptionEqualToValue={(option, value) =>
+              option._id === value
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="inherit">
+            Cancel
+          </Button>
+          <Button
+          color="inherit"
+          variant="outlined"
+          disabled={isLoading} // Disable the button during API calls
+          onClick={() => {
+            handleChangeVesselOwner(vesselId && vesselId);
+            handleClose();
+          }}
+        >
+          {isOLoading ? (
+            <CircularProgress size={20} />
+          ) : (
+            "Change Owner"
+          )}
+        </Button>
+        </DialogActions>
+      </BootstrapDialog>
+      {/* Display Alert */}
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={6000}
+        onClose={() => setAlertOpen(false)}
+      >
+        <Alert
+          onClose={() => setAlertOpen(false)}
+          severity={alertSeverity}
+          sx={{ width: "100%" }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
+
+
+
+
+
         {/* Delete Confirmation Dialog */}
         <Dialog
           open={showConfirmationDialog}
@@ -1638,6 +1816,7 @@ const VesselDetail = (props) => {
             <CircularProgress color="primary" />
           </div>
         )}
+      
 
         <br />
         <br />
@@ -2057,9 +2236,12 @@ const VesselDetail = (props) => {
                             color="primary"
                             onClick={() => console.log("Certificate")}
                           >
-                          <Link target="_blank" to="https://www.africau.edu/images/default/sample.pdf">
-                          <FileCopy />
-                          </Link>
+                            <Link
+                              target="_blank"
+                              to="https://www.africau.edu/images/default/sample.pdf"
+                            >
+                              <FileCopy />
+                            </Link>
                           </IconButton>
                         ) : (
                           <IconButton disabled>
@@ -2098,6 +2280,7 @@ const VesselDetail = (props) => {
                 </TableBody>
               </Table>
             </TableContainerStyled>
+           
           </Box>
         </Container>
       </RootContainer>

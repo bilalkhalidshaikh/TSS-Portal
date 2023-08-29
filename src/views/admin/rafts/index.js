@@ -19,20 +19,18 @@ import {
   Typography,
   MenuItem,
   Stack,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import SearchBar from "./../customers/SearchBar";
 import axios from "axios";
-import PropTypes from 'prop-types';
-import SwipeableViews from 'react-swipeable-views';
-import AppBar from '@mui/material/AppBar';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-
-
-
-
+import PropTypes from "prop-types";
+import SwipeableViews from "react-swipeable-views";
+import AppBar from "@mui/material/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -63,11 +61,11 @@ TabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
+    "aria-controls": `full-width-tabpanel-${index}`,
   };
 }
 
- function FullWidthTabs() {
+function FullWidthTabs() {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
@@ -80,8 +78,11 @@ function a11yProps(index) {
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.paper' }}>
-      <AppBar position="static" sx={{backgroundColor:"#11047A",color:'#eee'}}>
+    <Box sx={{ bgcolor: "background.paper" }}>
+      <AppBar
+        position="static"
+        sx={{ backgroundColor: "#11047A", color: "#eee" }}
+      >
         <Tabs
           value={value}
           onChange={handleChange}
@@ -95,7 +96,7 @@ function a11yProps(index) {
         </Tabs>
       </AppBar>
       <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
         index={value}
         onChangeIndex={handleChangeIndex}
       >
@@ -110,9 +111,7 @@ function a11yProps(index) {
   );
 }
 
-
-
-const Rafts = ({title}) => {
+const Rafts = ({ title }) => {
   const [open, setOpen] = React.useState(false);
   const BASE_URL = "https://api.raft-service.com";
   const API_KEY = "340304930490d9f0df90df90df9d0f9d0f";
@@ -147,12 +146,9 @@ const Rafts = ({title}) => {
     };
 
     try {
-      const response = await axios.get(
-        `${BASE_URL}/rafts/get-all-rafts`,
-        {
-          headers,
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/rafts/get-all-rafts`, {
+        headers,
+      });
       const equipmentData = response.data.data;
       setEquipments(equipmentData);
     } catch (error) {
@@ -266,8 +262,64 @@ const Rafts = ({title}) => {
     setValue(index);
   };
 
-
   const theme = createTheme();
+  const label = { inputProps: { "aria-label": "Switch demo" } };
+
+  const handleChangeRaftRequestStatus = async (requestId) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
+    };
+
+    try {
+      await axios.post(
+        `${BASE_URL}/services/change-raft-request-status`,
+        { requestId },
+        {
+          headers,
+        }
+      );
+      // Update the status of the raft request in the state
+      setEquipments((prevEquipments) =>
+        prevEquipments.map((equipment) => {
+          if (equipment._id === requestId) {
+            return {
+              ...equipment,
+              // Toggle the service_done status
+              service_done: !equipment.service_done,
+            };
+          }
+          return equipment;
+        })
+      );
+    } catch (error) {
+      console.error("Error changing raft request status:", error);
+    }
+  };
+
+  const handleDeleteServiceRequest = async (requestId) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
+    };
+
+    try {
+      await axios.post(
+        `${BASE_URL}/services/delete-service-request`,
+        { requestId },
+        {
+          headers,
+        }
+      );
+      // Remove the deleted service request from the state
+      setEquipments((prevEquipments) =>
+        prevEquipments.filter((equipment) => equipment._id !== requestId)
+      );
+    } catch (error) {
+      console.error("Error deleting service request:", error);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -276,103 +328,134 @@ const Rafts = ({title}) => {
         <br />
         <br />
         <br />
-          <Typography variant="h6" >
-        {title}
-        </Typography>
-         <br/>
-        <Box sx={{ bgcolor: 'background.paper' }}>
-      <AppBar position="static" sx={{backgroundColor:"#11047A",color:'#eee'}}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="secondary"
-          textColor="inherit"
-          variant="fullWidth"
-          aria-label="full width tabs example"
-        >
-          <Tab label="Service Near" {...a11yProps(0)} />
-          <Tab label="Normal" {...a11yProps(1)} />
-        </Tabs>
-      </AppBar>
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-      >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-        <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Raft's Name</TableCell>
-              <TableCell>Serial Number</TableCell>
-              <TableCell>Size</TableCell>
-              <TableCell>Vessel Name</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {equipments.map((equipment) => (
-              <TableRow key={equipment._id}>
-                <TableCell>{equipment.raftName}</TableCell>
-                <TableCell>{equipment.serialNumber}</TableCell>
-                <TableCell>{equipment.size}</TableCell>
-                <TableCell>{equipment.vessel.vesselName}</TableCell>
-                <TableCell>{equipment.type}</TableCell>
-                <TableCell>
-                      
-                <IconButton
-                 
-                >
-                  <Delete />
-                </IconButton>
-              </TableCell>
+        <Typography variant="h6">{title}</Typography>
+        <br />
+        <Box sx={{ bgcolor: "background.paper" }}>
+          <AppBar
+            position="static"
+            sx={{ backgroundColor: "#11047A", color: "#eee" }}
+          >
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              indicatorColor="secondary"
+              textColor="inherit"
+              variant="fullWidth"
+              aria-label="full width tabs example"
+            >
+              <Tab label="Service Near" {...a11yProps(0)} />
+              <Tab label="Normal" {...a11yProps(1)} />
+            </Tabs>
+          </AppBar>
+          <SwipeableViews
+            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+            index={value}
+            onChangeIndex={handleChangeIndex}
+          >
+            <TabPanel value={value} index={0} dir={theme.direction}>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Raft's Name</TableCell>
+                      <TableCell>Serial Number</TableCell>
+                      <TableCell>Size</TableCell>
+                      <TableCell>Vessel Name</TableCell>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Change Status</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {equipments.map((equipment) => (
+                      <TableRow key={equipment._id}>
+                        <TableCell>{equipment.raftName}</TableCell>
+                        <TableCell>{equipment.serialNumber}</TableCell>
+                        <TableCell>{equipment.size}</TableCell>
+                        <TableCell>{equipment.vessel.vesselName}</TableCell>
+                        <TableCell>{equipment.type}</TableCell>
+                        <TableCell>
+                          <IconButton
+                            onClick={() =>
+                              handleChangeRaftRequestStatus(equipment._id)
+                            }
+                          >
+                            {equipment.service_done ? (
+                              <span>Finish</span>
+                            ) : (
+                              <span>Pending</span>
+                            )}
+                          </IconButton>
+                        </TableCell>
 
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-        <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Raft's Name</TableCell>
-              <TableCell>Serial Number</TableCell>
-              <TableCell>Size</TableCell>
-              <TableCell>Vessel Name</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {equipments.map((equipment) => (
-              <TableRow key={equipment._id}>
-                <TableCell>{equipment.raftName}</TableCell>
-                <TableCell>{equipment.serialNumber}</TableCell>
-                <TableCell>{equipment.size}</TableCell>
-                <TableCell>{equipment.vessel.vesselName}</TableCell>
-                <TableCell>{equipment.type}</TableCell>
-                <TableCell>
-                      
-                <IconButton
-                 
-                >
-                  <Delete />
-                </IconButton>
-              </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-        </TabPanel>
-      </SwipeableViews>
-    </Box>
-      
+                        <TableCell>
+                          <IconButton
+                            onClick={() =>
+                              handleDeleteServiceRequest(equipment._id)
+                            }
+                          >
+                            <Delete />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </TabPanel>
+            <TabPanel value={value} index={1} dir={theme.direction}>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Raft's Name</TableCell>
+                      <TableCell>Serial Number</TableCell>
+                      <TableCell>Size</TableCell>
+                      <TableCell>Vessel Name</TableCell>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Change Status</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {equipments.map((equipment) => (
+                      <TableRow key={equipment._id}>
+                        <TableCell>{equipment.raftName}</TableCell>
+                        <TableCell>{equipment.serialNumber}</TableCell>
+                        <TableCell>{equipment.size}</TableCell>
+                        <TableCell>{equipment.vessel.vesselName}</TableCell>
+                        <TableCell>{equipment.type}</TableCell>
+                        <TableCell>
+                          <IconButton
+                            onClick={() =>
+                              handleChangeRaftRequestStatus(equipment._id)
+                            }
+                          >
+                            {equipment.service_done ? (
+                              <span>Finish</span>
+                            ) : (
+                              <span>Pending</span>
+                            )}
+                          </IconButton>
+                        </TableCell>
+
+                        <TableCell>
+                          <IconButton
+                            onClick={() =>
+                              handleDeleteServiceRequest(equipment._id)
+                            }
+                          >
+                            <Delete />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </TabPanel>
+          </SwipeableViews>
+        </Box>
 
         <Dialog open={open} onClose={handleModalClose}>
           <DialogTitle>
