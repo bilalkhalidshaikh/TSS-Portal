@@ -1087,36 +1087,38 @@ const VesselDetail = (props) => {
       fetchAvailableOwners();
     }, []);
 
+// Function to change vessel owner
+const handleChangeVesselOwner = async (vesselId) => {
+  if (!vesselOwner) {
+    showAlert("error", "Please select a new owner.");
+    return;
+  }
 
-    // Function to change vessel owner
-
-  
-  // Function to change vessel owner
-  const handleChangeVesselOwner = async (vesselId) => {
-    if (vesselOwner) {
-      try {
-        setIsOLoading(true);
-        const requestBody = {
-          newCustomerId: vesselOwner,
-          vesselId: vesselId, // Replace with the actual vessel ID
-        };
-        await axios.post(`${BASE_URL}/vessel/change-vessel-owner`, requestBody, {
-          headers: {
-            Authorization: `Bearer ${API_KEY}`,
-          },
-        });
-        fetchVesselInfo();
-        setIsOLoading(false);
-        showAlert("success", "Vessel owner changed successfully!");
-      } catch (error) {
-        console.error("Error changing vessel owner:", error);
-        setIsOLoading(false);
-        showAlert("error", "Error changing vessel owner. Please try again.");
+  try {
+    setIsOLoading(true);
+    const requestBody = {
+      newCustomerId: vesselOwner,
+      vesselId: vesselId,
+    };
+    const response = await axios.post(
+      `${BASE_URL}/vessel/change-vessel-owner`,
+      requestBody,
+      {
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+        },
       }
-    } else {
-      showAlert("error", "Please select a new owner.");
-    }
-  };
+    );
+    fetchVesselInfo();
+    setIsOLoading(false);
+    showAlert("success", "Vessel owner changed successfully!");
+  } catch (error) {
+    console.error("Error changing vessel owner:", error);
+    setIsOLoading(false);
+    showAlert("error", "Error changing vessel owner. Please try again.");
+  }
+};
+
 
 
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -1224,39 +1226,28 @@ const VesselDetail = (props) => {
               >
                 Change Owner
               </Button>
-            
-              </Stack>
-            </Toolbar>
-          </AppBar>
-        </Box>
-
-
-
-        <BootstrapDialog open={open}  aria-labelledby="customized-dialog-title" onClose={handleClose}>
+              <BootstrapDialog open={open}  aria-labelledby="customized-dialog-title" onClose={handleClose}>
         <DialogTitle>Change Vessel Owner</DialogTitle>
         <DialogContent>
-          <Autocomplete
-            options={availableOwners}
-            getOptionLabel={(customer) => customer.customerName}
-           // Use selected owner ID as value
-            onChange={(_, newValue) => {
-              setVesselOwner(newValue ? newValue : ""); // Update vesselOwner with the selected customer ID
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                // label="Owner Name"
-                fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder="Select Owner"
-              />
-            )}
-            isOptionEqualToValue={(option, value) =>
-              option._id === value
-            }
+        <Autocomplete
+        options={availableOwners}
+        getOptionLabel={(customer) => customer.customerName}
+        onChange={(_, newValue) => {
+          console.log("Selected owner:", newValue);
+          setVesselOwner(newValue && newValue);
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            fullWidth
+            // InputLabelProps={{
+            //   shrink: true,
+            // }}
+            placeholder="Select Owner"
           />
+        )}
+        // isOptionEqualToValue={(option, value) => option._id === value}
+      />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="inherit">
@@ -1267,18 +1258,24 @@ const VesselDetail = (props) => {
           variant="outlined"
           disabled={isLoading} // Disable the button during API calls
           onClick={() => {
-            handleChangeVesselOwner(vesselId && vesselId);
+            console.log("vesselId:", vesselId);
+            handleChangeVesselOwner(vesselId);
             handleClose();
           }}
         >
-          {isOLoading ? (
-            <CircularProgress size={20} />
-          ) : (
-            "Change Owner"
-          )}
+            Change Owner
         </Button>
         </DialogActions>
       </BootstrapDialog>
+              </Stack>
+            </Toolbar>
+          </AppBar>
+      
+        </Box>
+
+
+
+      
 
       
       {/* Display Alert */}
@@ -1323,6 +1320,10 @@ const VesselDetail = (props) => {
             </Button>
           </DialogActions>
         </Dialog>
+
+
+
+      
       </>
     );
   }
