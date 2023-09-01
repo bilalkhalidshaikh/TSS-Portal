@@ -1054,20 +1054,14 @@ const VesselDetail = (props) => {
     const [alertMessage, setAlertMessage] = useState("");
 
     // Function to show an alert
-    const showAlert = (severity, message) => {
-      setAlertSeverity(severity);
-      setAlertMessage(message);
-      setAlertOpen(true);
-    };
   
     const handleClickOpen = () => {
       setOpen(true);
     };
-  
-    const handleClose = () => {
-      setOpen(false);
-    };
-    // Fetch available owners from the API
+
+
+
+
     const fetchAvailableOwners = async () => {
       setIsOLoading(true);
       try {
@@ -1086,38 +1080,101 @@ const VesselDetail = (props) => {
     useEffect(() => {
       fetchAvailableOwners();
     }, []);
-
-// Function to change vessel owner
-const handleChangeVesselOwner = async (vesselId) => {
-  if (!vesselOwner) {
-    showAlert("error", "Please select a new owner.");
-    return;
-  }
-
-  try {
-    setIsOLoading(true);
-    const requestBody = {
-      newCustomerId: vesselOwner,
-      vesselId: vesselId,
-    };
-    const response = await axios.post(
-      `${BASE_URL}/vessel/change-vessel-owner`,
-      requestBody,
-      {
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-        },
+  
+    const handleChangeVesselOwner = async () => {
+      if (!vesselOwner) {
+        showAlert("error", "Please select a new owner.");
+        return;
       }
-    );
-    fetchVesselInfo();
-    setIsOLoading(false);
-    showAlert("success", "Vessel owner changed successfully!");
-  } catch (error) {
-    console.error("Error changing vessel owner:", error);
-    setIsOLoading(false);
-    showAlert("error", "Error changing vessel owner. Please try again.");
-  }
-};
+  
+      try {
+        setIsOLoading(true);
+        const requestBody = {
+          newCustomerId: vesselOwner,
+          vesselId: vesselId,
+        };
+        const response = await axios.post(
+          `${BASE_URL}/vessel/change-vessel-owner`,
+          requestBody,
+          {
+            headers: {
+              Authorization: `Bearer ${API_KEY}`,
+            },
+          }
+        );
+        // Do something with the response, if needed
+        setIsOLoading(false);
+        fetchVesselInfo()
+        showAlert("success", "Vessel owner changed successfully!");
+      } catch (error) {
+        console.error("Error changing vessel owner:", error);
+        setIsOLoading(false);
+        showAlert("error", "Error changing vessel owner. Please try again.");
+      }
+    };
+  
+    const showAlert = (severity, message) => {
+      setAlertSeverity(severity);
+      setAlertMessage(message);
+      setAlertOpen(true);
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
+  
+    // Fetch available owners from the API
+//     const fetchAvailableOwners = async () => {
+//       setIsOLoading(true);
+//       try {
+//         const response = await axios.get(`${BASE_URL}/customers/get-all-customers`, {
+//           headers: {
+//             Authorization: `Bearer ${API_KEY}`,
+//           },
+//         });
+//         setAvailableOwners(response.data.data);
+//       } catch (error) {
+//         console.error("Error fetching available owners:", error);
+//       }
+//       setIsOLoading(false);
+//     };
+  
+//     useEffect(() => {
+//       fetchAvailableOwners();
+//     }, []);
+
+// // Function to change vessel owner
+// const handleChangeVesselOwner = async (vesselId) => {
+//   if (!vesselOwner) {
+//     showAlert("error", "Please select a new owner.");
+//     return;
+//   }
+  
+
+//   try {
+//     setIsOLoading(true);
+//     const requestBody = {
+//       newCustomerId: vesselOwner,
+//       vesselId: vesselId,
+//     };
+//     const response = await axios.post(
+//       `${BASE_URL}/vessel/change-vessel-owner`,
+//       requestBody,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${API_KEY}`,
+//         },
+//       }
+//     );
+//     fetchVesselInfo();
+//     setIsOLoading(false);
+//     showAlert("success", "Vessel owner changed successfully!");
+//   } catch (error) {
+//     console.error("Error changing vessel owner:", error);
+//     setIsOLoading(false);
+//     showAlert("error", "Error changing vessel owner. Please try again.");
+//   }
+// };
 
 
 
@@ -1226,47 +1283,6 @@ const handleChangeVesselOwner = async (vesselId) => {
               >
                 Change Owner
               </Button>
-              <BootstrapDialog open={open}  aria-labelledby="customized-dialog-title" onClose={handleClose}>
-        <DialogTitle>Change Vessel Owner</DialogTitle>
-        <DialogContent>
-        <Autocomplete
-        options={availableOwners}
-        getOptionLabel={(customer) => customer.customerName}
-        onChange={(_, newValue) => {
-          console.log("Selected owner:", newValue);
-          setVesselOwner(newValue && newValue);
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            fullWidth
-            // InputLabelProps={{
-            //   shrink: true,
-            // }}
-            placeholder="Select Owner"
-          />
-        )}
-        // isOptionEqualToValue={(option, value) => option._id === value}
-      />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="inherit">
-            Cancel
-          </Button>
-          <Button
-          color="inherit"
-          variant="outlined"
-          disabled={isLoading} // Disable the button during API calls
-          onClick={() => {
-            console.log("vesselId:", vesselId);
-            handleChangeVesselOwner(vesselId);
-            handleClose();
-          }}
-        >
-            Change Owner
-        </Button>
-        </DialogActions>
-      </BootstrapDialog>
               </Stack>
             </Toolbar>
           </AppBar>
@@ -1274,7 +1290,41 @@ const handleChangeVesselOwner = async (vesselId) => {
         </Box>
 
 
-
+        <BootstrapDialog open={open} onClose={handleClose}>
+          <DialogTitle>Change Vessel Owner</DialogTitle>
+          <DialogContent>
+            <Autocomplete
+              options={availableOwners}
+              getOptionLabel={(customer) => customer.customerName}
+              onChange={(_, newValue) => {
+                setVesselOwner(newValue ? newValue._id : "");
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  placeholder="Select Owner"
+                />
+              )}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="inherit">
+              Cancel
+            </Button>
+            <Button
+              color="inherit"
+              variant="outlined"
+              disabled={isOLoading}
+              onClick={() => {
+                handleChangeVesselOwner();
+                handleClose();
+              }}
+            >
+              {isOLoading ? <CircularProgress size={20} /> : "Change Owner"}
+            </Button>
+          </DialogActions>
+      </BootstrapDialog>
       
 
       
