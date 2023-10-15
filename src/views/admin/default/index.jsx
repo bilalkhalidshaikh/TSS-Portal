@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, Card, CardContent, Grid, Typography, Stack } from "@mui/material";
+import React,{useState,useEffect} from "react";
+import { Box, Card, CardContent, Grid, Typography, Stack,CircularProgress} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
@@ -15,22 +15,26 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import axios from "axios";
+
 
 const theme = createTheme();
 
 const useStyles = makeStyles(() => ({
   card: {
-    height: "80%",
+    height: "100%",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    padding: "16px",
+    padding: "18px",
     backgroundColor: "#11047A",
     backdropFilter: "blur(10px)",
     boxShadow: "0px 8px 32px rgba(31, 38, 135, 0.37)",
     color: "white",
     textAlign: "center",
+    width:500,
+    marginLeft:'120px',
   },
   table: {
     height: 400,
@@ -60,6 +64,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const activities = [
     {
       id: 1,
@@ -94,11 +100,56 @@ const Dashboard = () => {
     createData('Gingerbread', 356, 16.0, 49, 3.9),
   ];
   
+  const [dashboardData, setDashboardData] = useState(null);
+    const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${'340304930490d9f0df90df90df9d0f9d0f'}`,
+  };
+
+  useEffect(() => {
+    // Fetch dashboard data
+    setIsLoading(true)
+    axios
+      .get("https://api.raft-service.com/dashboard/get-dashboard",{headers})
+      .then((response) => {
+        if (response.data && response.data.success) {
+          setDashboardData(response.data.data);
+        }
+        setIsLoading(false)
+      })
+      .catch((error) => {
+        console.error("Error fetching dashboard data:", error);
+        setIsLoading(false)
+      });
+  }, []);
+
+  const renderCard = (icon, title, value) => {
+    return (
+      <>
+      <Card className={classes.card}>
+        <CardContent>
+          {icon}
+          <Typography variant="h6" component="div">
+            {title}
+          </Typography>
+          <Typography variant="h3" component="div">
+            {value}
+          </Typography>
+        </CardContent>
+      </Card>
+      <div>
+     &nbsp;
+     </div>
+      </>
+    );
+  };
+  
+
 
   return (
     <ThemeProvider theme={theme}>
-      <Box pt={{ xs: "130px", md: "80px", xl: "80px" }}>
-        <Grid container spacing={3}>
+      <Box pt={{ xs: "130px", md: "100px", xl: "80px" }}>
+        {/* <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card className={classes.card}>
               <CardContent>
@@ -164,8 +215,62 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </Grid>
-        </Grid>
-        <Box mt={3}>
+        </Grid> */}
+          {dashboardData && (
+            <>
+         <Grid container spacing={12}>
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                
+              {renderCard(
+                <AccessAlarmIcon style={{ fontSize: 40 }} />,
+                "Customers",
+                dashboardData.customers
+              )}
+                &nbsp;
+              &nbsp;
+              &nbsp;
+              </Grid> 
+            
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+              {renderCard(
+                <ThreeDRotationIcon style={{ fontSize: 40 }} />,
+                "Rafts",
+                dashboardData.rafts
+              )}
+
+              </Grid>
+                </Grid>
+              <br/> 
+              <Box> 
+
+         <Grid container spacing={12}>
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+              {renderCard(
+                <AccessAlarmIcon style={{ fontSize: 40 }} />,
+                "Vessels",
+                dashboardData.vessels
+              )}
+
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+              {renderCard(
+                <AccessAlarmIcon style={{ fontSize: 40 }} />,
+                "Equipments",
+                dashboardData.equipments
+              )}
+
+              </Grid>
+              </Grid>
+              </Box>
+              {/* {renderCard(
+                <ThreeDRotationIcon style={{ fontSize: 40 }} />,
+                "Support Tickets",
+                10 // Hardcoded, replace with the actual value
+              )} */}
+            </>
+          )}
+              </Box>
+        {/* <Box mt={3}>
           <Typography variant="h4" style={{marginTop:'20px'}}>
             Recent Activities
           </Typography>
@@ -281,8 +386,25 @@ const Dashboard = () => {
           </Table>
         </TableContainer>
           </Box>
-        </Box>
-      </Box>
+        </Box> */}
+           {isLoading && (
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(0, 0, 0, 0.5)",
+                zIndex: 9999,
+              }}
+            >
+              <CircularProgress color="primary" />
+            </div>
+          )}
     </ThemeProvider>
   );
 };
