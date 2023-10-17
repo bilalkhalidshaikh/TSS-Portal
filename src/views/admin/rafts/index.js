@@ -31,6 +31,7 @@ import SwipeableViews from "react-swipeable-views";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import { Link } from "react-router-dom";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -368,12 +369,23 @@ const Rafts = ({ title }) => {
                   <TableBody>
                     {equipments.map((equipment) => (
                       <TableRow key={equipment._id}>
-                        <TableCell>{equipment.raftName}</TableCell>
+                             <TableCell>
+                          <Link
+                            to={`/admin/vessel-detail/${equipment?.vesselId}`}
+                          >
+                            {equipment.raftName}
+                          </Link>
+                        </TableCell>
                         <TableCell>{equipment.serialNumber}</TableCell>
                         <TableCell>{equipment.size}</TableCell>
-                        <TableCell>{equipment.vessel.vesselName}</TableCell>
+                        <TableCell>
+                          <Link
+                            to={`/admin/vessel-detail/${equipment?.vesselId}`}
+                          >
+                            {equipment.vessel.vesselName}
+                          </Link>
+                        </TableCell>
                         <TableCell>{equipment.type}</TableCell>
-                  
 
                         <TableCell>
                           <IconButton
@@ -406,12 +418,23 @@ const Rafts = ({ title }) => {
                   <TableBody>
                     {equipments.map((equipment) => (
                       <TableRow key={equipment._id}>
-                        <TableCell>{equipment.raftName}</TableCell>
+                        <TableCell>
+                          <Link
+                            to={`/admin/vessel-detail/${equipment?.vesselId}`}
+                          >
+                            {equipment.raftName}
+                          </Link>
+                        </TableCell>
                         <TableCell>{equipment.serialNumber}</TableCell>
                         <TableCell>{equipment.size}</TableCell>
-                        <TableCell>{equipment.vessel.vesselName}</TableCell>
+                        <TableCell>
+                          <Link
+                            to={`/admin/vessel-detail/${equipment?.vesselId}`}
+                          >
+                            {equipment.vessel.vesselName}
+                          </Link>
+                        </TableCell>
                         <TableCell>{equipment.type}</TableCell>
-                        
 
                         <TableCell>
                           <IconButton

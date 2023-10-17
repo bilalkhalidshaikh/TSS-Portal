@@ -2188,6 +2188,7 @@ const VesselDetail = (props) => {
                   &nbsp;
                   <TextField
                     name="productionDate"
+                    helperText="Production Date"
                     type="date"
                     required
                     fullWidth
@@ -2196,6 +2197,7 @@ const VesselDetail = (props) => {
                   &nbsp;
                   <TextField
                     name="lastService"
+                    helperText="last Service"
                     type="date"
                     required
                     fullWidth
@@ -2216,6 +2218,7 @@ const VesselDetail = (props) => {
                   &nbsp;
                   <TextField
                     name="nextService"
+                    helperText="Next Service"
                     type="date"
                     required
                     fullWidth

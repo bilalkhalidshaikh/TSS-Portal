@@ -169,6 +169,7 @@ const Equipments = () => {
   };
 
   const theme = createTheme();
+  
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -206,8 +207,11 @@ const Equipments = () => {
                 <TableRow key={equipment._id}>
                   <TableCell>{equipment.eq_name}</TableCell>
                   <TableCell>{equipment.mva}%</TableCell>
-                  <TableCell>{equipment.unitPrice}$</TableCell>
-                  <TableCell>{equipment.expiry_period}</TableCell>
+                  <TableCell>{equipment.unitPrice}NOK</TableCell>
+
+                  <TableCell>
+                    {formatDate(new Date(equipment.expiry_period))}
+                    </TableCell>
 
                   <TableCell>
                     <IconButton onClick={() => handleEditEquipment(equipment)}>

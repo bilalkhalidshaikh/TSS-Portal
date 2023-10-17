@@ -22,9 +22,9 @@ const theme = createTheme();
 
 const useStyles = makeStyles(() => ({
   card: {
-    height: "100%",
+    height: "80%",
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "center",
     justifyContent: "center",
     alignItems: "center",
     padding: "18px",
@@ -33,8 +33,7 @@ const useStyles = makeStyles(() => ({
     boxShadow: "0px 8px 32px rgba(31, 38, 135, 0.37)",
     color: "white",
     textAlign: "center",
-    width:500,
-    marginLeft:'120px',
+    // width:400
   },
   table: {
     height: 400,
@@ -137,9 +136,7 @@ const Dashboard = () => {
           </Typography>
         </CardContent>
       </Card>
-      <div>
-     &nbsp;
-     </div>
+      &nbsp;
       </>
     );
   };
@@ -148,7 +145,7 @@ const Dashboard = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box pt={{ xs: "130px", md: "100px", xl: "80px" }}>
+      <Box pt={{ xs: "130px", md: "80px", xl: "80px" }}>
         {/* <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card className={classes.card}>
@@ -218,19 +215,15 @@ const Dashboard = () => {
         </Grid> */}
           {dashboardData && (
             <>
-         <Grid container spacing={12}>
-              <Grid item xs={12} sm={6} md={4} lg={3}>
+         <Grid container spacing={8}>
+              <Grid item xs={12} sm={6} md={6} lg={3}>
                 
               {renderCard(
                 <AccessAlarmIcon style={{ fontSize: 40 }} />,
                 "Customers",
                 dashboardData.customers
               )}
-                &nbsp;
-              &nbsp;
-              &nbsp;
-              </Grid> 
-            
+              </Grid>
               <Grid item xs={12} sm={6} md={4} lg={3}>
               {renderCard(
                 <ThreeDRotationIcon style={{ fontSize: 40 }} />,
@@ -243,7 +236,7 @@ const Dashboard = () => {
               <br/> 
               <Box> 
 
-         <Grid container spacing={12}>
+         <Grid container spacing={8}>
               <Grid item xs={12} sm={6} md={4} lg={3}>
               {renderCard(
                 <AccessAlarmIcon style={{ fontSize: 40 }} />,
