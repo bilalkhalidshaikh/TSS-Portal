@@ -33,6 +33,7 @@ import RequestedServices from "views/admin/requested";
 import CustomersAndSupport from "views/admin/contactsupport";
 import DataTables from "views/admin/dataTables";
 import RTL from "views/admin/rtl";
+import NotFound from "./views/Notfound";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
@@ -45,6 +46,7 @@ const routes = [
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: MainDashboard,
   },
+
   {
     name: "Customers",
     layout: "/admin",
@@ -139,6 +141,13 @@ const routes = [
     // icon: <Icon as={MdContacts} width='20px' height='20px' color='inherit' />,
     // component: RTL,
     component: CustomerDetail,
+  },
+  {
+    // name: "Sign In",
+    layout: "/auth",
+    path: "/sign-in",
+    // icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    component: SignInCentered,
   },
 ];
 

@@ -5,7 +5,7 @@ import {
 	Flex,
 	Icon,
 	Image,
-	Link,
+	// Link,
 	Menu,
 	MenuButton,
 	MenuItem,
@@ -19,6 +19,7 @@ import { SearchBar } from 'components/navbar/searchBar/SearchBar';
 import { SidebarResponsive } from 'components/sidebar/Sidebar';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {Link} from "react-router-dom"
 // Assets
 import navImage from 'assets/img/layout/Navbar.png';
 import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
@@ -214,7 +215,7 @@ export default function HeaderLinks(props) {
 							color="red.400"
 							borderRadius="8px"
 							px="14px">
-							<Text fontSize="sm">Log out</Text>
+							<Text fontSize="sm"><Link to="/auth/sign-in">Log out</Link></Text>
 						</MenuItem>
 					</Flex>
 				</MenuList>

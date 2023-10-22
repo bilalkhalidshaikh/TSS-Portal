@@ -650,42 +650,13 @@ const Vessel = () => {
     // Implement your search logic here, and update searchResults state accordingly.
     // For example, you can fetch data from an API based on the search term and update the results.
     // setSearchResults(updatedResults);
-
+      setSearchQuery(searchTerm); // Update the search query state
+  
+    
     console.log(searchTerm);
   };
 
-  // useEffect(() => {
-  //   const fetchCustomers = async () => {
-  //     const headers = {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${API_KEY}`,
-  //     };
-  //     try {
-  //       const response = await axios.get(
-  //         "https://api.raft-service.com/customers/get-all-customers",
-  //         { headers }
-  //       );
-  //       setCustomers(response.data.data);
-  //       setFilteredCustomers(response.data.data); // Initialize filteredCustomers with all customers
-  //     } catch (error) {
-  //       console.error("Error fetching customers:", error);
-  //     }
-  //   };
-  //   fetchCustomers();
-  // }, []);
-  // const handleSearchChange = (event) => {
-  //   const query = event.target.value.toLowerCase();
-  //   setSearchQuery(query);
 
-  //   // Filter customers based on the search query
-  //   const filtered = customers.filter((customer) =>
-  //     customer.customerName.toLowerCase().startsWith(query)
-  //   );
-
-  //   setFilteredCustomers(filtered); // Update the filteredCustomers array
-  // };
-
- 
   const fetchCustomers = async () => {
     const headers = {
       "Content-Type": "application/json",
@@ -705,17 +676,6 @@ const Vessel = () => {
     }
   };
 
-
-  // const handleSearchChange = async (event) => {
-  //   const query = event.target.value.toLowerCase();
-  //   setSearchQuery(query);
-
-  //   if (query.length >= 2) {
-  //     await fetchCustomers(); // Fetch customers from the API based on the search query
-  //   } else {
-  //     setFilteredCustomers([]); // Clear the list when the query is empty or too short
-  //   }
-  // };
 
   useEffect(() => {
     fetchCustomers();
@@ -916,13 +876,27 @@ const Vessel = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell><b>Vessel Name</b></TableCell>
-                <TableCell><b>Registration Number</b></TableCell>
-                <TableCell><b>Type</b></TableCell>
-                <TableCell><b>Owner Name</b></TableCell>
-                <TableCell><b>Created At</b></TableCell>
-                <TableCell><b>Active</b></TableCell>
-                <TableCell><b>Actions</b></TableCell>
+                <TableCell>
+                  <b>Vessel Name</b>
+                </TableCell>
+                <TableCell>
+                  <b>Registration Number</b>
+                </TableCell>
+                <TableCell>
+                  <b>Type</b>
+                </TableCell>
+                <TableCell>
+                  <b>Owner Name</b>
+                </TableCell>
+                <TableCell>
+                  <b>Created At</b>
+                </TableCell>
+                <TableCell>
+                  <b>Active</b>
+                </TableCell>
+                <TableCell>
+                  <b>Actions</b>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -931,7 +905,12 @@ const Vessel = () => {
                   <TableCell colSpan={6}>No Vessels found.</TableCell>
                 </TableRow>
               ) : (
-                vessels.map((vessel) => (
+                vessels
+                .filter((vessel) =>
+                  // Filter the vessels based on the search query
+                  vessel.vesselName.toLowerCase().startsWith(searchQuery.toLowerCase())
+                )
+                .map((vessel) => (
                   <TableRow key={vessel._id}>
                     <TableCell>
                       <Link to={`/admin/vessel-detail/${vessel._id}`}>
@@ -941,10 +920,12 @@ const Vessel = () => {
                     <TableCell>{vessel.registrationNumber}</TableCell>
                     <TableCell>{vessel.vesselType}</TableCell>
                     <TableCell>
-                    <Link to={`/admin/customer-detail/${vessel?.ownerInfo?._id}`}>
-                      {vessel?.ownerInfo?.customerName}
+                      <Link
+                        to={`/admin/customer-detail/${vessel?.ownerInfo?._id}`}
+                      >
+                        {vessel?.ownerInfo?.customerName}
                       </Link>
-                      </TableCell>
+                    </TableCell>
                     <TableCell>
                       {format(
                         new Date(vessel.ownerInfo.created_at),
@@ -1007,26 +988,26 @@ const Vessel = () => {
             />
             &nbsp;
             <Autocomplete
-            options={filteredCustomers}
-            getOptionLabel={(customer) => customer.customerName}
-            // value={vesselOwner?vesselOwner:"Select Owner"}
-            onChange={(_, newValue) => {
-              setVesselOwner(newValue ? newValue : ""); // Update vesselOwner with the selected customer ID
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Owner Name"
-                fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder="Select Owner"
-              />
-            )}
-            placeholder="Select Owner"
-            isOptionEqualToValue={(option, value) => option._id === value}
-          />
+              options={filteredCustomers}
+              getOptionLabel={(customer) => customer.customerName}
+              // value={vesselOwner?vesselOwner:"Select Owner"}
+              onChange={(_, newValue) => {
+                setVesselOwner(newValue ? newValue : ""); // Update vesselOwner with the selected customer ID
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Owner Name"
+                  fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder="Select Owner"
+                />
+              )}
+              placeholder="Select Owner"
+              isOptionEqualToValue={(option, value) => option._id === value}
+            />
             &nbsp;
           </DialogContent>
           <DialogActions>
