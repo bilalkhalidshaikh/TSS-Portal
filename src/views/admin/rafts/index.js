@@ -358,12 +358,12 @@ const Rafts = ({ title }) => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Raft's Name</TableCell>
-                      <TableCell>Serial Number</TableCell>
-                      <TableCell>Size</TableCell>
-                      <TableCell>Vessel Name</TableCell>
-                      <TableCell>Type</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell><b>Raft's Name</b></TableCell>
+                      <TableCell><b>Serial Number</b></TableCell>
+                      <TableCell><b>Size</b></TableCell>
+                      <TableCell><b>Vessel Name</b></TableCell>
+                      <TableCell><b>Type</b></TableCell>
+                      <TableCell><b>Actions</b></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -407,12 +407,12 @@ const Rafts = ({ title }) => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Raft's Name</TableCell>
-                      <TableCell>Serial Number</TableCell>
-                      <TableCell>Size</TableCell>
-                      <TableCell>Vessel Name</TableCell>
-                      <TableCell>Type</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell><b>Raft's Name</b></TableCell>
+                      <TableCell><b>Serial Number</b></TableCell>
+                      <TableCell><b>Size</b></TableCell>
+                      <TableCell><b>Vessel Name</b></TableCell>
+                      <TableCell><b>Type</b></TableCell>
+                      <TableCell><b>Actions</b></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

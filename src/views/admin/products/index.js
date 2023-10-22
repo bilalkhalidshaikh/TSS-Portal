@@ -350,11 +350,11 @@ const ProductListing = ({ title }) => {
                   <TableHead>
                     <TableRow>
                       {/* Update table headers */}
-                      <TableCell>Equipment Name</TableCell>
-                      <TableCell>Vessel Name</TableCell>
-                      <TableCell>Ordered On</TableCell>
-                      <TableCell>Change Status</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell><b>Equipment Name</b></TableCell>
+                      <TableCell><b>Vessel Name</b></TableCell>
+                      <TableCell><b>Ordered On</b></TableCell>
+                      <TableCell><b>Change Status</b></TableCell>
+                      <TableCell><b>Actions</b></TableCell>
 
                       {/* Add more headers as needed */}
                     </TableRow>
@@ -416,11 +416,11 @@ const ProductListing = ({ title }) => {
                   <TableHead>
                     <TableRow>
                       {/* Update table headers */}
-                      <TableCell>Equipment Name</TableCell>
-                      <TableCell>Vessel Name</TableCell>
-                      <TableCell>Ordered On</TableCell>
-                      <TableCell>Change Status</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell><b>Equipment Name</b></TableCell>
+                      <TableCell><b>Vessel Name</b></TableCell>
+                      <TableCell><b>Ordered On</b></TableCell>
+                      <TableCell><b>Change Status</b></TableCell>
+                      <TableCell><b>Actions</b></TableCell>
                       {/* Add more headers as needed */}
                     </TableRow>
                   </TableHead>

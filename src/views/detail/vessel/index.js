@@ -726,10 +726,77 @@ const VesselDetail = (props) => {
   }, []);
 
   // Function to add a new raft
+  // const handleAddRaft = async (event) => {
+  //   setIsLoading(true);
+  //   event.preventDefault();
+
+  //   const raftName = event.target.raftName.value;
+  //   const serialNumber = event.target.serialNumber.value;
+  //   const productionDate = event.target.productionDate.value;
+  //   const lastService = event.target.lastService.value;
+  //   const size = event.target.size.value;
+  //   const type = event.target.type.value;
+  //   const nextService = event.target.nextService.value;
+
+  //   try {
+  //     const response = await axios.post(
+  //       `${BASE_URL}/rafts/create-raft`,
+  //       {
+  //         vesselId,
+  //         raftName,
+  //         serialNumber,
+  //         production_date: productionDate,
+  //         last_service: lastService,
+  //         size,
+  //         type,
+  //         next_service: nextService,
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${API_KEY}`,
+  //         },
+  //       }
+  //     );
+
+  //     console.log("New raft added:", response.data);
+  //     // Refresh the rafts data after adding a new raft
+  //     fetchVesselInfo();
+  //     handleClose();
+  //   } catch (error) {
+  //     console.error("Error adding raft:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const addCertificate = async (raftId, certificateFile) => {
+    try {
+      const formData = new FormData();
+      formData.append("pdfFile", certificateFile);
+      formData.append("raftId", raftId);
+  
+      const response = await axios.post(
+        `${BASE_URL}/upload-raft-certificate`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+  
+      console.log("Certificate uploaded:", response.data);
+    } catch (error) {
+      console.error("Error uploading certificate:", error);
+    }
+  };
+  
   const handleAddRaft = async (event) => {
     setIsLoading(true);
     event.preventDefault();
-
+  
     const raftName = event.target.raftName.value;
     const serialNumber = event.target.serialNumber.value;
     const productionDate = event.target.productionDate.value;
@@ -737,7 +804,7 @@ const VesselDetail = (props) => {
     const size = event.target.size.value;
     const type = event.target.type.value;
     const nextService = event.target.nextService.value;
-
+  
     try {
       const response = await axios.post(
         `${BASE_URL}/rafts/create-raft`,
@@ -758,8 +825,16 @@ const VesselDetail = (props) => {
           },
         }
       );
-
+  
       console.log("New raft added:", response.data);
+  
+      // Check if a certificate file was selected
+      const certificateFile = event.target.certificate.files[0];
+      if (certificateFile) {
+        // Upload the certificate and associate it with the newly created raft
+        await addCertificate(response.data.raftId, certificateFile);
+      }
+  
       // Refresh the rafts data after adding a new raft
       fetchVesselInfo();
       handleClose();
@@ -769,6 +844,7 @@ const VesselDetail = (props) => {
       setIsLoading(false);
     }
   };
+  
 
   const handleEditRaftSubmit = async (id) => {
     // Implement the logic to update the raft data
@@ -2184,6 +2260,18 @@ const VesselDetail = (props) => {
                     required
                     fullWidth
                   />
+                  <br />
+                  &nbsp;
+                  <TextField
+  // label="Certificate"
+  type="file"
+  name="certificate"
+  inputProps={{ accept: "application/pdf" }} // Set accepted file types (PDF in this case)
+  fullWidth
+  helperText="Upload Certificate here"
+
+/>
+
                   <br />
                   &nbsp;
                   <TextField

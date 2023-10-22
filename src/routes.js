@@ -21,6 +21,7 @@ import NFTMarketplace from "views/admin/marketplace";
 import Customers from "views/admin/customers";
 import Vessel from "views/admin/vessel";
 import VesselDetail from "views/detail/vessel";
+import CustomerDetail from "views/detail/customer";
 import Equipments from "views/admin/equipments";
 import Profile from "views/admin/profile";
 import Rafts from "views/admin/rafts";
@@ -127,6 +128,17 @@ const routes = [
     // icon: <Icon as={MdContacts} width='20px' height='20px' color='inherit' />,
     // component: RTL,
     component: VesselDetail,
+  },
+  {
+    // name: "Vessel Detail",
+    // layout: "/rtl",
+    layout: "/admin",
+    // path: "/rtl-default",
+    // path: "/vessel-detail",
+    path: "/customer-detail/:customerId", // Update path to include /:vesselId
+    // icon: <Icon as={MdContacts} width='20px' height='20px' color='inherit' />,
+    // component: RTL,
+    component: CustomerDetail,
   },
 ];
 

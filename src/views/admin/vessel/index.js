@@ -916,13 +916,13 @@ const Vessel = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Vessel Name</TableCell>
-                <TableCell>Registration Number</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Owner Name</TableCell>
-                <TableCell>Created At</TableCell>
-                <TableCell>Active</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell><b>Vessel Name</b></TableCell>
+                <TableCell><b>Registration Number</b></TableCell>
+                <TableCell><b>Type</b></TableCell>
+                <TableCell><b>Owner Name</b></TableCell>
+                <TableCell><b>Created At</b></TableCell>
+                <TableCell><b>Active</b></TableCell>
+                <TableCell><b>Actions</b></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -940,7 +940,11 @@ const Vessel = () => {
                     </TableCell>
                     <TableCell>{vessel.registrationNumber}</TableCell>
                     <TableCell>{vessel.vesselType}</TableCell>
-                    <TableCell>{vessel.ownerInfo.customerName}</TableCell>
+                    <TableCell>
+                    <Link to={`/admin/customer-detail/${vessel?.ownerInfo?._id}`}>
+                      {vessel?.ownerInfo?.customerName}
+                      </Link>
+                      </TableCell>
                     <TableCell>
                       {format(
                         new Date(vessel.ownerInfo.created_at),

@@ -229,11 +229,11 @@ const RequestedServices = ({title}) => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Vessel's Name</TableCell>
-                      <TableCell>Customer Name</TableCell>
-                      <TableCell>Raft Name</TableCell>
-                      <TableCell>Requested On</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell><b>Vessel's Name</b></TableCell>
+                      <TableCell><b>Customer Name</b></TableCell>
+                      <TableCell><b>Raft Name</b></TableCell>
+                      <TableCell><b>Requested On</b></TableCell>
+                      <TableCell><b>Actions</b></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -289,11 +289,11 @@ const RequestedServices = ({title}) => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Vessel's Name</TableCell>
-                      <TableCell>Customer Name</TableCell>
-                      <TableCell>Raft Name</TableCell>
-                      <TableCell>Requested On</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell><b>Vessel's Name</b></TableCell>
+                      <TableCell><b>Customer Name</b></TableCell>
+                      <TableCell><b>Raft Name</b></TableCell>
+                      <TableCell><b>Requested On</b></TableCell>
+                      <TableCell><b>Actions</b></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

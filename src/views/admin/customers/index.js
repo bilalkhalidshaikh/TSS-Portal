@@ -706,6 +706,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import HideSourceIcon from "@mui/icons-material/HideSource";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import SearchBar from "./SearchBar"; // Path to the SearchBar component
+import { Link } from "react-router-dom";
+
 
 const CustomerList = () => {
   const [open, setOpen] = React.useState(false);
@@ -941,12 +943,12 @@ const CustomerList = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Customer Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone Number</TableCell>
-                <TableCell>Is Active</TableCell>
-                <TableCell>Is Blocked</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell> <b>Customer Name</b></TableCell>
+                <TableCell><b>Email</b></TableCell>
+                <TableCell><b>Phone Number</b></TableCell>
+                <TableCell><b>Is Active</b></TableCell>
+                <TableCell><b>Is Blocked</b></TableCell>
+                <TableCell><b>Actions</b></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -958,7 +960,11 @@ const CustomerList = () => {
                 ) : (
                   customers.map((customer) => (
                     <TableRow key={customer._id}>
-                      <TableCell>{customer.customerName}</TableCell>
+                      <TableCell>
+                      <Link to={`/admin/customer-detail/${customer._id}`}>
+                        {customer.customerName}
+                        </Link>
+                        </TableCell>
                       <TableCell>{customer.email}</TableCell>
                       <TableCell>{customer.phone_number}</TableCell>
                       <TableCell>{customer.isActive ? "Yes" : "No"}</TableCell>

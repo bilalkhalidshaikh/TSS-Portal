@@ -195,23 +195,23 @@ const Equipments = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Equipments Name</TableCell>
-                <TableCell>Mva</TableCell>
-                <TableCell>Unit Price</TableCell>
-                <TableCell>Expiry Period</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell ><b> Equipments Name</b></TableCell>
+                {/* <TableCell>Mva</TableCell> */}
+                <TableCell><b>Unit Price</b></TableCell>
+                {/* <TableCell>Expiry Period</TableCell> */}
+                <TableCell><b>Actions</b></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {equipments.map((equipment) => (
                 <TableRow key={equipment._id}>
                   <TableCell>{equipment.eq_name}</TableCell>
-                  <TableCell>{equipment.mva}%</TableCell>
-                  <TableCell>{equipment.unitPrice}NOK</TableCell>
+                  {/* <TableCell>{equipment.mva}%</TableCell> */}
+                  <TableCell>{equipment.unitPrice} NOK</TableCell>
 
-                  <TableCell>
+                  {/* <TableCell>
                     {formatDate(new Date(equipment.expiry_period))}
-                    </TableCell>
+                    </TableCell> */}
 
                   <TableCell>
                     <IconButton onClick={() => handleEditEquipment(equipment)}>
@@ -243,14 +243,14 @@ const Equipments = () => {
               onChange={(e) => setEquipmentName(e.target.value)}
             />
             &nbsp;
-            <TextField
+            {/* <TextField
               label="Mva"
               type="number"
               fullWidth
               value={mva}
               onChange={(e) => setMva(parseFloat(e.target.value))}
             />
-            &nbsp;
+            &nbsp; */}
             <TextField
               label="Unit Price"
               type="number"
@@ -259,7 +259,7 @@ const Equipments = () => {
               onChange={(e) => setUnitPrice(parseFloat(e.target.value))}
             />
             &nbsp;
-            <TextField
+            {/* <TextField
               label="Expiry Date"
               type="date"
               fullWidth
@@ -268,7 +268,7 @@ const Equipments = () => {
               InputLabelProps={{
                 shrink: true,
               }}
-            />
+            /> */}
           </DialogContent>
 
           <DialogActions>
